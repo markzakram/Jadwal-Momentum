@@ -1,0 +1,16 @@
+node_modules/
+.next/
+out/
+build/
+.vercel/
+.env
+.env.local
+*.tsbuildinfo
+next-env.d.ts
+
+# file kerja, bukan bagian aplikasi
+*.xlsx
+*.pdf
+
+# kanvas desain hasil rakitan - sumbernya design/*.dc.html
+design/dashboard-jadwal-seleksi.html

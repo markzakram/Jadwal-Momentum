@@ -1,0 +1,186 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,300;6..72,400;6..72,500&family=Work+Sans:wght@400;500;600;700&display=swap">
+  <style>
+    body { margin: 0; font-family: 'Work Sans', 'Segoe UI', system-ui, sans-serif; }
+    a { color: #9a5b2c; } a:hover { color: #7a4520; }
+  </style>
+</helmet>
+
+<div style="width: 1400px; height: 1040px; background: #faf7f1; color: #1f1c17; display: flex; flex-direction: column; overflow: hidden;">
+
+  <div style="display: flex; align-items: flex-end; gap: 28px; padding: 34px 56px 24px; flex: none;">
+    <div>
+      <div style="font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase; color: #9c9184; font-weight: 600;">Tim Marketing · Jadwal Seleksi</div>
+      <div style="font-family: 'Newsreader', Georgia, serif; font-size: 40px; font-weight: 400; letter-spacing: -0.015em; margin-top: 6px; line-height: 1;">Agenda Seleksi</div>
+    </div>
+    <div style="flex-grow: 1;"></div>
+    <div style="display: flex; gap: 26px; align-items: flex-end;">
+      <div style="text-align: right;">
+        <div style="font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #9c9184; font-weight: 600;">Hari ini</div>
+        <div style="font-family: 'Newsreader', Georgia, serif; font-size: 21px; margin-top: 3px;">16 September 2026</div>
+      </div>
+      <div style="display: flex; gap: 4px; border: 1px solid #e0d8cb; border-radius: 999px; padding: 3px;">
+        <span style="font-size: 11.5px; font-weight: 600; padding: 6px 15px; border-radius: 999px; background: #1f1c17; color: #faf7f1;">Real</span>
+        <span style="font-size: 11.5px; font-weight: 500; padding: 6px 15px; border-radius: 999px; color: #6f665b;">Prediksi</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- pita: yang bergerak minggu ini -->
+  <div style="margin: 0 56px 26px; border-top: 2px solid #1f1c17; border-bottom: 1px solid #e0d8cb; padding: 18px 0 20px; flex: none;">
+    <div style="font-family: 'Newsreader', Georgia, serif; font-size: 15px; margin-bottom: 14px;">Tujuh hari ke depan</div>
+    <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 30px;">
+      <div style="display: flex; gap: 14px;">
+        <div style="flex: none; width: 46px; text-align: center;">
+          <div style="font-family: 'Newsreader', Georgia, serif; font-size: 27px; line-height: 1;">16</div>
+          <div style="font-size: 9.5px; letter-spacing: 0.12em; text-transform: uppercase; color: #9c9184; margin-top: 2px;">Sep</div>
+        </div>
+        <div style="border-left: 2px solid #12998b; padding-left: 14px;">
+          <div style="font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #12998b; font-weight: 600;">JadiASN</div>
+          <div style="font-size: 14.5px; font-weight: 500; margin-top: 2px;">CPNS — SKD dimulai</div>
+          <div style="font-size: 11.5px; color: #6f665b; margin-top: 3px;">16 Sep – 5 Okt · hasil 10 Okt</div>
+        </div>
+      </div>
+      <div style="display: flex; gap: 14px;">
+        <div style="flex: none; width: 46px; text-align: center;">
+          <div style="font-family: 'Newsreader', Georgia, serif; font-size: 27px; line-height: 1;">21</div>
+          <div style="font-size: 9.5px; letter-spacing: 0.12em; text-transform: uppercase; color: #9c9184; margin-top: 2px;">Sep</div>
+        </div>
+        <div style="border-left: 2px solid #3c9a4e; padding-left: 14px;">
+          <div style="font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #3c9a4e; font-weight: 600;">JadiPrajurit</div>
+          <div style="font-size: 14.5px; font-weight: 500; margin-top: 2px;">Bintara PK TNI AU III — seleksi daerah</div>
+          <div style="font-size: 11.5px; color: #6f665b; margin-top: 3px;">21 Sep – 4 Okt · 5 hari lagi</div>
+        </div>
+      </div>
+      <div style="display: flex; gap: 14px;">
+        <div style="flex: none; width: 46px; text-align: center;">
+          <div style="font-family: 'Newsreader', Georgia, serif; font-size: 27px; line-height: 1;">22</div>
+          <div style="font-size: 9.5px; letter-spacing: 0.12em; text-transform: uppercase; color: #9c9184; margin-top: 2px;">Sep</div>
+        </div>
+        <div style="border-left: 2px solid #3aa8d6; padding-left: 14px;">
+          <div style="font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #3aa8d6; font-weight: 600;">JadiSekdin</div>
+          <div style="font-size: 14.5px; font-weight: 500; margin-top: 2px;">PKN STAN &amp; IPDN — pelaksanaan SKD</div>
+          <div style="font-size: 11.5px; color: #6f665b; margin-top: 3px;">22 Sep – 7 Okt · dua program serentak</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- tulang bulan -->
+  <div style="flex-grow: 1; overflow: hidden; padding: 0 56px;">
+    <div style="display: grid; grid-template-columns: 96px 1fr; gap: 0;">
+
+      <div style="padding-top: 4px;">
+        <div style="font-family: 'Newsreader', Georgia, serif; font-size: 30px; line-height: 1;">Sep</div>
+        <div style="font-size: 10.5px; color: #9c9184; letter-spacing: 0.1em; margin-top: 2px;">2026</div>
+      </div>
+      <div style="border-left: 1px solid #e0d8cb; padding: 0 0 26px 30px; display: flex; flex-direction: column; gap: 16px;">
+        <div style="display: grid; grid-template-columns: 78px 1fr 150px; gap: 20px; align-items: baseline;">
+          <span style="font-size: 12px; color: #9c9184;">2 – 20</span>
+          <div>
+            <span style="font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #4a82e0; font-weight: 600;">JadiBUMN</span>
+            <div style="font-size: 15px; font-weight: 500; margin-top: 1px;">BNI — ODP Retail Banking</div>
+          </div>
+          <span style="font-size: 11.5px; color: #b45309; text-align: right; font-weight: 500;">Pendaftaran tutup</span>
+        </div>
+        <div style="display: grid; grid-template-columns: 78px 1fr 150px; gap: 20px; align-items: baseline;">
+          <span style="font-size: 12px; color: #9c9184;">7 – 10</span>
+          <div>
+            <span style="font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #4a82e0; font-weight: 600;">JadiBUMN</span>
+            <div style="font-size: 15px; font-weight: 500; margin-top: 1px;">KAI Group — Rekrutmen Eksternal</div>
+          </div>
+          <span style="font-size: 11.5px; color: #6f665b; text-align: right;">Apply lamaran</span>
+        </div>
+        <div style="display: grid; grid-template-columns: 78px 1fr 150px; gap: 20px; align-items: baseline;">
+          <span style="font-size: 12px; font-weight: 600; color: #1f1c17;">16 →</span>
+          <div>
+            <span style="font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #12998b; font-weight: 600;">JadiASN</span>
+            <div style="font-size: 15px; font-weight: 500; margin-top: 1px;">CPNS — SKD (TWK, TIU, TKP)</div>
+          </div>
+          <span style="font-size: 11.5px; color: #b45309; text-align: right; font-weight: 500;">Berlangsung</span>
+        </div>
+        <div style="display: grid; grid-template-columns: 78px 1fr 150px; gap: 20px; align-items: baseline;">
+          <span style="font-size: 12px; color: #9c9184;">21 – 4 Okt</span>
+          <div>
+            <span style="font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #3c9a4e; font-weight: 600;">JadiPrajurit</span>
+            <div style="font-size: 15px; font-weight: 500; margin-top: 1px;">Bintara PK TNI AU III — seleksi daerah</div>
+          </div>
+          <span style="font-size: 11.5px; color: #6f665b; text-align: right;">Tahap daerah</span>
+        </div>
+        <div style="display: grid; grid-template-columns: 78px 1fr 150px; gap: 20px; align-items: baseline;">
+          <span style="font-size: 12px; color: #9c9184;">22 – 7 Okt</span>
+          <div>
+            <span style="font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #3aa8d6; font-weight: 600;">JadiSekdin</span>
+            <div style="font-size: 15px; font-weight: 500; margin-top: 1px;">PKN STAN &amp; IPDN — pelaksanaan SKD</div>
+          </div>
+          <span style="font-size: 11.5px; color: #6f665b; text-align: right;">Dua program</span>
+        </div>
+        <div style="display: grid; grid-template-columns: 78px 1fr 150px; gap: 20px; align-items: baseline;">
+          <span style="font-size: 12px; color: #9c9184;">27</span>
+          <div>
+            <span style="font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #d2473a; font-weight: 600;">Cerebrum</span>
+            <div style="font-size: 15px; font-weight: 500; margin-top: 1px;">TKA SMA/MA/SMK/MAK 2026</div>
+          </div>
+          <span style="font-size: 11.5px; color: #b45309; text-align: right; font-weight: 500;">Pendaftaran tutup</span>
+        </div>
+        <div style="display: grid; grid-template-columns: 78px 1fr 150px; gap: 20px; align-items: baseline;">
+          <span style="font-size: 12px; color: #9c9184;">27 – 4 Okt</span>
+          <div>
+            <span style="font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #94a821; font-weight: 600;">JadiBeasiswa</span>
+            <div style="font-size: 15px; font-weight: 500; margin-top: 1px;">LPDP Batch II — seleksi bakat skolastik</div>
+          </div>
+          <span style="font-size: 11.5px; color: #6f665b; text-align: right;">Tahap 1</span>
+        </div>
+      </div>
+
+      <div style="padding-top: 4px;">
+        <div style="font-family: 'Newsreader', Georgia, serif; font-size: 30px; line-height: 1; color: #9c9184;">Okt</div>
+        <div style="font-size: 10.5px; color: #c4b9a9; letter-spacing: 0.1em; margin-top: 2px;">2026</div>
+      </div>
+      <div style="border-left: 1px solid #e0d8cb; padding: 0 0 26px 30px; display: flex; flex-direction: column; gap: 16px;">
+        <div style="display: grid; grid-template-columns: 78px 1fr 150px; gap: 20px; align-items: baseline;">
+          <span style="font-size: 12px; color: #9c9184;">1 – 13</span>
+          <div>
+            <span style="font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #3aa8d6; font-weight: 600;">JadiSekdin</span>
+            <div style="font-size: 15px; font-weight: 500; margin-top: 1px;">PKN STAN — pengumuman hasil SKD</div>
+          </div>
+          <span style="font-size: 11.5px; color: #6f665b; text-align: right;">Pengumuman</span>
+        </div>
+        <div style="display: grid; grid-template-columns: 78px 1fr 150px; gap: 20px; align-items: baseline;">
+          <span style="font-size: 12px; color: #9c9184;">4 – 6</span>
+          <div>
+            <span style="font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #4a82e0; font-weight: 600;">JadiBUMN</span>
+            <div style="font-size: 15px; font-weight: 500; margin-top: 1px;">BNI — asesmen / psikotes</div>
+          </div>
+          <span style="font-size: 11.5px; color: #6f665b; text-align: right;">Tahap 1</span>
+        </div>
+        <div style="display: grid; grid-template-columns: 78px 1fr 150px; gap: 20px; align-items: baseline;">
+          <span style="font-size: 12px; color: #9c9184;">26 – 8 Nov</span>
+          <div>
+            <span style="font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #d2473a; font-weight: 600;">Cerebrum</span>
+            <div style="font-size: 15px; font-weight: 500; margin-top: 1px;">TKA — pelaksanaan utama</div>
+          </div>
+          <span style="font-size: 11.5px; color: #6f665b; text-align: right;">Tahap 1</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div style="display: flex; align-items: center; gap: 12px; padding: 14px 56px; border-top: 1px solid #e0d8cb; background: #f3eee5; flex: none;">
+    <span style="font-size: 10px; letter-spacing: 0.14em; font-weight: 700; color: #9a5b2c; flex: none;">B · AGENDA</span>
+    <span style="font-size: 11.5px; color: #6f665b;">Sumbu: <b style="color: #1f1c17;">waktu</b> — disusun sebagai kalender, bukan daftar; yang terdekat selalu di atas. Kekurangannya: membandingkan antar platform jadi susah, dan halamannya panjang.</span>
+  </div>
+
+</div>
+</x-dc>
+</body>
+</html>

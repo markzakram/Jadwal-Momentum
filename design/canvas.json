@@ -1,0 +1,18 @@
+{
+  "artboards": [
+    { "file": "Main.dc.html", "x": 0, "y": 0, "w": 1400, "h": 1040, "title": "A · Ruang Kendali" },
+    { "file": "Agenda.dc.html", "x": 1520, "y": 0, "w": 1400, "h": 1040, "title": "B · Agenda" },
+    { "file": "PapanStatus.dc.html", "x": 0, "y": 1260, "w": 1400, "h": 1040, "title": "C · Papan Status" },
+    { "file": "Momentum.dc.html", "x": 1520, "y": 1260, "w": 1400, "h": 1040, "title": "D · Kartu Momentum" }
+  ],
+  "annotations": [
+    {
+      "id": "cara-memilih",
+      "x": -470,
+      "y": 0,
+      "w": 400,
+      "text": "Empat arah, empat sumbu berbeda:\n\nA — kepadatan. Semua terbaca sekaligus.\nB — waktu. Kalender jadi tulang punggung.\nC — keadaan. Kolom per status.\nD — fokus. Satu hal besar, sisanya kecil.\n\nData asli per 16 Sep 2026, tab Real.\nPalet platform sama seperti aplikasi\nyang sudah jalan.\n\nPilih satu, nanti saya bangun penuh."
+    }
+  ],
+  "launch": { "view": "canvas" }
+}
