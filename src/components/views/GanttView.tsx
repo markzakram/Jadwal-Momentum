@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState, type CSSProperties, type MouseEvent } from "react";
 import Icon from "../Icon";
+import PlatformMark from "../PlatformMark";
 import TipeTag from "../TipeTag";
 import { ZOOMS, buildGantt, defaultZoom, type GBar, type GMark, type GRow, type ZoomKey } from "@/lib/gantt";
 import { platformColor } from "@/lib/palette";
@@ -241,7 +242,7 @@ export default function GanttView({
                       <span className="gchev">
                         <Icon name="chevron" size={12} />
                       </span>
-                      <i className="gdot" style={{ background: platformColor(g.platform) }} />
+                      <PlatformMark platform={g.platform} size={13} />
                       <b style={{ color: platformColor(g.platform) }}>{g.platform}</b>
                       <em>{g.rows.length}</em>
                     </button>

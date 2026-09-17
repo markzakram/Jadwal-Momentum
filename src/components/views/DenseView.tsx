@@ -2,8 +2,9 @@
 
 import DateText from "../DateText";
 import Icon from "../Icon";
+import PlatformMark from "../PlatformMark";
 import TipeTag from "../TipeTag";
-import { STATUS_BADGE, STATUS_ICON, platformColor } from "@/lib/palette";
+import { STATUS_BADGE, STATUS_ICON } from "@/lib/palette";
 import { daysBetween, nextEvent, statusOf, toIso } from "@/lib/status";
 import type { Entry } from "@/lib/types";
 
@@ -45,7 +46,7 @@ export default function DenseView({
         return (
           <div className="dense-row" key={it.id}>
             <span className="dense-plat" title={it.platform}>
-              <i style={{ background: platformColor(it.platform) }} />
+              <PlatformMark platform={it.platform} size={13} />
               {it.platform}
             </span>
             {showTipe && (

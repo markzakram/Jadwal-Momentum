@@ -29,7 +29,19 @@ export type IconName =
   | "calendarPlus"
   | "check"
   | "layers"
-  | "chevron";
+  | "chevron"
+  // satu per platform
+  | "bulb"
+  | "institution"
+  | "shield"
+  | "briefcase"
+  | "cap"
+  | "banknote"
+  | "chevrons"
+  | "doc"
+  | "bookOpen"
+  | "star"
+  | "flag";
 
 const SHAPES: Record<IconName, ReactElement> = {
   // mode tampilan
@@ -139,6 +151,71 @@ const SHAPES: Record<IconName, ReactElement> = {
     </>
   ),
   chevron: <path d="M9 5l7 7-7 7" />,
+
+  /*
+   * Ikon platform. Dipilih menurut SILUETNYA lebih dulu, baru maknanya - pada
+   * 13px yang tersisa dari sebuah bentuk hanyalah garis luarnya. Karena itu
+   * Cerebrum memakai bohlam, bukan otak: otak yang digambar sekecil ini luruh
+   * jadi gumpalan. Dua "gedung" juga dihindari - JadiASN memakai gedung
+   * berpilar, JadiBUMN memakai koper kerja, supaya tidak tertukar.
+   */
+  bulb: (
+    <>
+      <path d="M12 3a5.5 5.5 0 0 0-3.2 10c.5.4.7.9.7 1.5V16h5v-1.5c0-.6.2-1.1.7-1.5A5.5 5.5 0 0 0 12 3z" />
+      <path d="M9.5 19h5M10.6 21.4h2.8" />
+    </>
+  ),
+  institution: (
+    <>
+      <path d="M3 9.6L12 4.2l9 5.4" />
+      <path d="M5.4 10.4v8.2M9.8 10.4v8.2M14.2 10.4v8.2M18.6 10.4v8.2" />
+      <path d="M3 20.6h18" />
+    </>
+  ),
+  shield: <path d="M12 3.2l7.4 2.9v5.7c0 4.2-2.9 8-7.4 9.2-4.5-1.2-7.4-5-7.4-9.2V6.1z" />,
+  briefcase: (
+    <>
+      <rect x="2.8" y="7.4" width="18.4" height="12.8" rx="2.6" />
+      <path d="M9 7.4V6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v1.4" />
+      <path d="M2.8 13h18.4" />
+    </>
+  ),
+  cap: (
+    <>
+      <path d="M12 4.2L2.6 8.4 12 12.6l9.4-4.2z" />
+      <path d="M6.6 10.3V15c0 1.7 2.4 3 5.4 3s5.4-1.3 5.4-3v-4.7" />
+      <path d="M21.4 8.4v5.2" />
+    </>
+  ),
+  banknote: (
+    <>
+      <rect x="2.4" y="6.2" width="19.2" height="11.6" rx="2.4" />
+      <circle cx="12" cy="12" r="2.6" />
+      <path d="M6 10.2v3.6M18 10.2v3.6" />
+    </>
+  ),
+  chevrons: <path d="M5 9l7-4 7 4M5 14l7-4 7 4M5 19l7-4 7 4" />,
+  doc: (
+    <>
+      <path d="M6.2 3.2h7l4.6 4.6v13H6.2z" />
+      <path d="M13.2 3.2v4.6h4.6" />
+      <path d="M9 13.4h6M9 17h4" />
+    </>
+  ),
+  bookOpen: (
+    <>
+      <path d="M12 7.6v12" />
+      <path d="M12 7.6C10.4 6 8.4 5.2 4 5.2v12c4.4 0 6.4.8 8 2.4" />
+      <path d="M12 7.6c1.6-1.6 3.6-2.4 8-2.4v12c-4.4 0-6.4.8-8 2.4" />
+    </>
+  ),
+  star: <path d="M12 3.4l2.7 5.4 6 .9-4.3 4.2 1 6-5.4-2.8-5.4 2.8 1-6L3.3 9.7l6-.9z" />,
+  flag: (
+    <>
+      <path d="M5.4 21V3.6" />
+      <path d="M5.4 4.6h11.4l-1.8 3.6 1.8 3.6H5.4" />
+    </>
+  ),
 };
 
 export default function Icon({

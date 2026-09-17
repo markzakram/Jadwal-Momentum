@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import DateText from "../DateText";
+import PlatformMark from "../PlatformMark";
 import TipeTag from "../TipeTag";
 import { countdownTone, platformColor, statusColor } from "@/lib/palette";
 import { countdown, nextEvent, statusOf, toIso } from "@/lib/status";
@@ -61,7 +62,7 @@ export default function BoardView({
                 <article className={`bcard${done ? " done" : ""}`} key={it.id}>
                   <div className="bcard-top">
                     <span className="bcard-plat" style={{ color: platformColor(it.platform) }}>
-                      <i style={{ background: platformColor(it.platform) }} />
+                      <PlatformMark platform={it.platform} size={12} />
                       {it.platform}
                     </span>
                     {showTipe && <TipeTag tipe={it.tipe} />}

@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import DateText from "./DateText";
 import { countChanges, diffSnapshots, takeSnapshot, type Change, type Snapshot } from "@/lib/changes";
 import { periodIso, type CrunchPeriod } from "@/lib/conflicts";
-import { platformColor } from "@/lib/palette";
+import PlatformMark from "./PlatformMark";
 import { daysBetween, fmt, fmtShort, toIso } from "@/lib/status";
 import { countBySeverity, validateRows } from "@/lib/validate";
 import type { Entry, SheetKey } from "@/lib/types";
@@ -143,7 +143,7 @@ export default function Notices({
                     {c.kind === "baru" ? "BARU" : c.kind === "hilang" ? "HILANG" : "DIUBAH"}
                   </span>
                   <span className="nwho">
-                    <i style={{ background: platformColor(c.platform) }} aria-hidden="true" />
+                    <PlatformMark platform={c.platform} size={12} />
                     {c.platform}
                     {c.program ? ` — ${c.program}` : ""}
                   </span>
@@ -191,7 +191,7 @@ export default function Notices({
                 <div className="nrow" key={`${f.id}-${f.rule}-${i}`}>
                   <span className={`ntag ${f.severity}`}>{f.severity === "error" ? "PERBAIKI" : "CEK"}</span>
                   <span className="nwho">
-                    <i style={{ background: platformColor(f.platform) }} aria-hidden="true" />
+                    <PlatformMark platform={f.platform} size={12} />
                     {f.platform}
                     {f.program ? ` — ${f.program}` : ""}
                   </span>
@@ -233,7 +233,7 @@ export default function Notices({
                     <ul className="np-rows">
                       {p.entries.map((b) => (
                         <li key={`${b.entry.id}-${b.label}`}>
-                          <i style={{ background: platformColor(b.entry.platform) }} aria-hidden="true" />
+                          <PlatformMark platform={b.entry.platform} size={12} />
                           <span className="np-prog">{b.entry.program || b.entry.platform}</span>
                           <span className="np-tahap">{b.label}</span>
                           <span className="np-tgl mono">

@@ -1,6 +1,7 @@
 "use client";
 
 import DateText from "../DateText";
+import PlatformMark from "../PlatformMark";
 import TipeTag from "../TipeTag";
 import { platformColor } from "@/lib/palette";
 import { MONTHS, agendaEvents, daysBetween, fmtShort, toIso } from "@/lib/status";
@@ -67,6 +68,7 @@ export default function AgendaView({
                   </span>
                   <div>
                     <span className="spine-plat" style={{ color: platformColor(e.entry.platform) }}>
+                      <PlatformMark platform={e.entry.platform} size={12} />
                       {e.entry.platform}
                     </span>
                     {showTipe && <TipeTag tipe={e.entry.tipe} />}

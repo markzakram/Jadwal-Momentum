@@ -188,7 +188,7 @@ html[data-theme="dark"] .seg a.on, html[data-theme="dark"] .seg button.on { back
 .ntag.ubah { background: rgba(var(--info-rgb), 0.14); color: var(--info); }
 .ntag.baru { background: rgba(var(--ok-rgb), 0.14); color: var(--ok); }
 .nwho { display: inline-flex; align-items: baseline; gap: var(--s1); font-weight: 500; line-height: 1.35; }
-.nwho i { width: 6px; height: 6px; border-radius: 2px; flex: none; align-self: center; }
+.nwho .plat-mark { align-self: center; }
 .nwhat { color: var(--muted); display: flex; flex-direction: column; gap: 3px; min-width: 0; }
 .nfield { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--s1); }
 .nfield b { color: var(--dim); font-weight: 600; font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; }
@@ -203,7 +203,7 @@ html[data-theme="dark"] .seg a.on, html[data-theme="dark"] .seg button.on { back
 .np-when b { font-size: 13px; display: block; }
 .np-when span { font-size: 11.5px; color: var(--dim); display: block; margin-top: 2px; }
 .np-rows { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
-.np-rows li { display: grid; grid-template-columns: 8px minmax(0, 1fr) 160px 120px; gap: var(--s2); align-items: start; font-size: 12px; }
+.np-rows li { display: grid; grid-template-columns: 14px minmax(0, 1fr) 160px 120px; gap: var(--s2); align-items: start; font-size: 12px; }
 .np-rows i { width: 7px; height: 7px; border-radius: 2px; margin-top: 5px; }
 .np-prog { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .np-tahap { color: var(--muted); line-height: 1.3; }
@@ -238,6 +238,9 @@ table.tblview th { color: var(--dim); font-weight: 600; font-size: 10px; text-tr
 table.tblview td.n { text-align: right; font-family: var(--mono); font-variant-numeric: tabular-nums; }
 
 /* ==== ikon ============================================================= */
+/* Penanda platform: ikon berwarna, menggantikan kotak 7px yang dulu hanya
+   membedakan platform lewat warna. Lihat components/PlatformMark.tsx. */
+.plat-mark { display: inline-flex; flex: none; }
 /* inline-block, bukan block: ikon ini juga dipakai di tengah teks (penanda
    periode menumpuk di kolom Program), dan block memaksanya turun sebaris. */
 .ico { display: inline-block; vertical-align: -0.16em; flex: none; }
@@ -343,7 +346,6 @@ html[data-theme="dark"] .viewbtn.on { background: var(--line); }
 .dense-row:last-child { border-bottom: none; }
 .dense-row:hover { background: var(--panel2); }
 .dense-plat { display: inline-flex; align-items: center; gap: var(--s1); font-size: 12px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.dense-plat i { width: 7px; height: 7px; border-radius: 2px; flex: none; }
 .dense-prog { font-size: 13px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .dense-prog a { color: inherit; text-decoration: none; }
 .dense-prog a:hover { text-decoration: underline; }
@@ -369,7 +371,7 @@ html[data-theme="dark"] .viewbtn.on { background: var(--line); }
 .rcard:hover { box-shadow: var(--shadow-lift); }
 
 .rc-top { display: flex; align-items: center; gap: var(--s1); flex-wrap: wrap; }
-.rc-plat { font-family: var(--mono); font-size: 10.5px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--acc); }
+.rc-plat { display: inline-flex; align-items: center; gap: 5px; font-family: var(--mono); font-size: 10.5px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--acc); }
 .rc-plat a { color: inherit; text-decoration: none; display: inline-flex; align-items: center; gap: 3px; }
 .rc-plat a:hover { text-decoration: underline; }
 .rc-top .badge { margin-left: auto; }
@@ -477,7 +479,6 @@ html[data-theme="dark"] .viewbtn.on { background: var(--line); }
 .gheadbtn em { font-style: normal; font-family: var(--mono); font-size: 10px; color: var(--dim); background: var(--sunk); padding: 1px 6px; border-radius: 999px; margin-left: auto; }
 .gchev { display: inline-flex; color: var(--dim); transform: rotate(90deg); transition: transform 0.14s; }
 .gheadbtn.off .gchev { transform: rotate(0deg); }
-.gdot { width: 7px; height: 7px; border-radius: 2px; flex: none; }
 
 .gtrack { position: relative; flex: none; width: var(--gtrack); height: 100%; }
 /* Cincin setipis permukaan memisahkan batang yang saling tindih (Tahap 1 dan
@@ -513,7 +514,7 @@ html[data-theme="dark"] .viewbtn.on { background: var(--line); }
 .spine-row { display: grid; grid-template-columns: 120px minmax(0, 1fr) 150px; gap: var(--s3); align-items: baseline; }
 .spine-when { font-family: var(--mono); font-size: 11.5px; color: var(--muted); }
 .spine-when.now { color: var(--text); font-weight: 600; }
-.spine-plat { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; }
+.spine-plat { display: inline-flex; align-items: center; gap: 5px; vertical-align: -2px; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; }
 .spine-plat + .tipe-tag { margin-left: var(--s1); vertical-align: 1px; }
 .spine-title { font-size: 14px; font-weight: 500; margin-top: 2px; }
 .spine-title a { color: inherit; text-decoration: none; }
@@ -532,7 +533,6 @@ html[data-theme="dark"] .viewbtn.on { background: var(--line); }
 .bcard.done { background: var(--sunk); box-shadow: none; }
 .bcard-top { display: flex; align-items: center; justify-content: space-between; gap: var(--s1); }
 .bcard-plat { display: inline-flex; align-items: center; gap: var(--s1); font-size: 10px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; }
-.bcard-plat i { width: 6px; height: 6px; border-radius: 2px; flex: none; }
 .bcard-title { font-size: 13px; font-weight: 600; line-height: 1.3; margin-top: var(--s1); }
 .bcard-title a { color: inherit; text-decoration: none; }
 .bcard-title a:hover { text-decoration: underline; }
@@ -576,7 +576,7 @@ html[data-theme="dark"] .viewbtn.on { background: var(--line); }
   .nrow { grid-template-columns: 74px minmax(0, 1fr); }
   .nrow .nwhat { grid-column: 1 / -1; }
   .nperiod { grid-template-columns: minmax(0, 1fr); gap: var(--s2); }
-  .np-rows li { grid-template-columns: 8px minmax(0, 1fr) 120px; }
+  .np-rows li { grid-template-columns: 14px minmax(0, 1fr) 120px; }
   .np-tahap { display: none; }
 }
 

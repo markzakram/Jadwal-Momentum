@@ -3,6 +3,7 @@
 import { useState, type CSSProperties, type ReactNode } from "react";
 import DateText from "../DateText";
 import Icon from "../Icon";
+import PlatformMark from "../PlatformMark";
 import TipeTag from "../TipeTag";
 import { STATUS_BADGE, STATUS_ICON, countdownTone, platformColor } from "@/lib/palette";
 import { countdown, statusOf } from "@/lib/status";
@@ -92,6 +93,7 @@ export default function CardView({
           >
             <div className="rc-top">
               <span className="rc-plat">
+                <PlatformMark platform={it.platform} size={13} />
                 {it.linkWeb ? (
                   <a href={it.linkWeb} target="_blank" rel="noopener noreferrer">
                     {it.platform}

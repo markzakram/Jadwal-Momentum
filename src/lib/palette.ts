@@ -33,6 +33,33 @@ export function platformColor(platform: string): string {
 }
 
 /**
+ * Ikon per platform. Sebelumnya platform hanya ditandai kotak kecil berwarna -
+ * artinya identitasnya bergantung pada warna SAJA, dan sebelas warna berdekatan
+ * memang sulit dibedakan sekilas, apalagi bagi mata buta warna. Bentuk menambah
+ * saluran kedua: warnanya boleh tidak terbaca, siluetnya tetap.
+ *
+ * Maknanya dipilih dari pekerjaan yang dituju, bukan dari logo platformnya -
+ * logo tidak boleh ditiru, dan pekerjaan itulah yang dicari pembaca.
+ */
+const PLATFORM_ICON: Record<string, IconName> = {
+  Cerebrum: "bulb",           // tes akademik sekolah
+  JadiASN: "institution",     // CPNS - gedung pemerintah
+  JadiOJK: "shield",          // otoritas pengawas
+  JadiBUMN: "briefcase",      // karier korporat
+  JadiBeasiswa: "cap",        // toga
+  JadiPCPM: "banknote",       // bank sentral
+  JadiPrajurit: "chevrons",   // pangkat militer
+  JadiPPPK: "doc",            // perjanjian kerja
+  JadiPPG: "bookOpen",        // pendidikan profesi guru
+  JadiPolisi: "star",         // lencana
+  JadiSekdin: "flag",         // sekolah kedinasan
+};
+
+export function platformIcon(platform: string): IconName {
+  return PLATFORM_ICON[platform] ?? "dot";
+}
+
+/**
  * Warna status. "Menunggu Tes" sengaja netral abu-abu - itu memang keadaan
  * menganggur, dan selalu tampil bersama label teks serta ikon, jadi identitasnya
  * tidak pernah bergantung pada warna saja.
