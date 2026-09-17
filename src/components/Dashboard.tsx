@@ -9,6 +9,7 @@ import StatusDonut from "./StatusDonut";
 import ThemeControls from "./ThemeControls";
 import AgendaView from "./views/AgendaView";
 import BoardView from "./views/BoardView";
+import CardView from "./views/CardView";
 import DenseView from "./views/DenseView";
 import GanttView from "./views/GanttView";
 import { crunchIds, findCrunch } from "@/lib/conflicts";
@@ -345,6 +346,8 @@ export default function Dashboard({
           <div className="empty">Tidak ada data yang cocok.</div>
         ) : view === "kendali" ? (
           <DenseView rows={visible} today={today} crunch={crunchSet} showTipe={tab === "Semua"} />
+        ) : view === "rincian" ? (
+          <CardView rows={visible} today={today} crunch={crunchSet} showTipe={tab === "Semua"} />
         ) : view === "gantt" ? (
           <GanttView rows={visible} today={today} crunch={crunchSet} showTipe={tab === "Semua"} />
         ) : view === "agenda" ? (

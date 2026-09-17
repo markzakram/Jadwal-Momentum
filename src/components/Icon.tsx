@@ -12,9 +12,13 @@ import type { ReactElement } from "react";
 
 export type IconName =
   | "list"
+  | "card"
   | "calendar"
   | "board"
   | "gantt"
+  | "globe"
+  | "book"
+  | "external"
   | "sun"
   | "moon"
   | "search"
@@ -35,6 +39,13 @@ const SHAPES: Record<IconName, ReactElement> = {
       <circle cx="4.6" cy="6" r="1.15" fill="currentColor" stroke="none" />
       <circle cx="4.6" cy="12" r="1.15" fill="currentColor" stroke="none" />
       <circle cx="4.6" cy="18" r="1.15" fill="currentColor" stroke="none" />
+    </>
+  ),
+  // kartu dengan baris isi — beda tegas dari `list` (titik + garis) dan `board`
+  card: (
+    <>
+      <rect x="3" y="4" width="18" height="16" rx="2.5" />
+      <path d="M7 9h6M7 13h10M7 17h7" />
     </>
   ),
   calendar: (
@@ -73,6 +84,28 @@ const SHAPES: Record<IconName, ReactElement> = {
     <>
       <circle cx="11" cy="11" r="6.5" />
       <path d="M19.8 19.8l-4.2-4.2" />
+    </>
+  ),
+
+  // tautan — menggantikan emoji 🌐 📘 ↗ pada kartu versi Apps Script
+  globe: (
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M3 12h18" />
+      <path d="M12 3a13.5 13.5 0 0 1 0 18a13.5 13.5 0 0 1 0-18z" />
+    </>
+  ),
+  book: (
+    <>
+      <path d="M4 19.2A2.8 2.8 0 0 1 6.8 16.4H20" />
+      <path d="M6.8 3H20v18H6.8A2.8 2.8 0 0 1 4 18.2V5.8A2.8 2.8 0 0 1 6.8 3z" />
+    </>
+  ),
+  external: (
+    <>
+      <path d="M14 4h6v6" />
+      <path d="M11 13L20 4" />
+      <path d="M18 14v4.5A2.5 2.5 0 0 1 15.5 21h-9A2.5 2.5 0 0 1 4 18.5v-9A2.5 2.5 0 0 1 6.5 7H11" />
     </>
   ),
 

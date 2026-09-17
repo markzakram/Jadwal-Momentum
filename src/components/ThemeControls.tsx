@@ -18,7 +18,21 @@ export default function ThemeControls() {
 
   function toggleTheme() {
     const next = theme === "dark" ? "light" : "dark";
-    document.documentElement.dataset.theme = next;
+    const el = document.documentElement;
+
+    /*
+     * Ganti tema mengubah belasan variabel warna sekaligus. Elemen yang punya
+     * `transition: color` justru MENAHAN warna lamanya saat itu terjadi -
+     * tautan "Situs Resmi" dan tombol tahun di kepala halaman tetap berwarna
+     * tema lama sampai halaman dimuat ulang. Transisi dimatikan selama satu
+     * bingkai supaya gaya barunya terpakai seketika; animasi sorot tetap utuh.
+     */
+    el.classList.add("theme-switching");
+    void el.offsetHeight;
+    el.dataset.theme = next;
+    void el.offsetHeight;
+    requestAnimationFrame(() => el.classList.remove("theme-switching"));
+
     setTheme(next);
     try {
       localStorage.setItem("theme", next);

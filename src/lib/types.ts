@@ -79,12 +79,13 @@ export const SHEETS = [
 export type SheetKey = (typeof SHEETS)[number]["key"];
 
 /**
- * Empat tampilan untuk data yang sama: kepadatan, waktu, keadaan, rentang.
- * Dipilih lewat tombol ikon di ujung kanan baris tab — bukan sebagai tab, karena
- * yang berganti adalah cara menampilkan data yang sama, bukan datanya.
+ * Lima tampilan untuk data yang sama: kepadatan, kelengkapan, rentang, waktu,
+ * keadaan. Dipilih lewat tombol ikon di ujung kanan baris tab — bukan sebagai
+ * tab, karena yang berganti adalah cara menampilkan data yang sama, bukan datanya.
  */
 export const VIEWS = [
   { key: "kendali", label: "Ruang Kendali", icon: "list", hint: "Daftar padat — semua baris sekaligus" },
+  { key: "rincian", label: "Rincian", icon: "card", hint: "Kartu — seluruh isi satu program, termasuk catatan" },
   { key: "gantt", label: "Lini Masa", icon: "gantt", hint: "Gantt — rentang tiap tahap, dikelompokkan per platform" },
   { key: "agenda", label: "Agenda", icon: "calendar", hint: "Berdasarkan waktu, dikelompokkan per bulan" },
   { key: "papan", label: "Papan Status", icon: "board", hint: "Kolom per status" },

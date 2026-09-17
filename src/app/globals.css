@@ -92,6 +92,12 @@ html[data-theme="dark"] {
 
 * { box-sizing: border-box; }
 
+/* Dipasang sekejap oleh ThemeControls saat tema berganti - lihat alasannya di
+   sana. Tanpa ini, tiap elemen ber-`transition: color` menahan warna tema lama. */
+html.theme-switching *,
+html.theme-switching *::before,
+html.theme-switching *::after { transition: none !important; }
+
 body {
   margin: 0;
   min-height: 100vh;
@@ -348,7 +354,57 @@ html[data-theme="dark"] .viewbtn.on { background: var(--line); }
 .dense-sisa { font-family: var(--mono); font-size: 11.5px; text-align: right; }
 .crunch-mark { color: var(--warn); margin-right: 3px; }
 
-/* ==== B · lini masa (Gantt) ============================================
+/* ==== B · kartu rincian ================================================
+   Kartu memuat SELURUH isi satu baris sheet, termasuk catatan panjang yang
+   tidak muat di tampilan mana pun yang lain. Warna platform hanya jadi garis
+   tepi kiri — bukan latar — supaya sebelas warna itu tidak saling berteriak
+   saat dua puluh kartu tampil sekaligus. */
+.rcards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s3); }
+.rcard {
+  background: var(--panel); border: 1px solid var(--line); border-left: 3px solid var(--acc);
+  border-radius: var(--r2); padding: var(--s3);
+  display: flex; flex-direction: column; gap: var(--s2);
+  transition: box-shadow 0.14s;
+}
+.rcard:hover { box-shadow: var(--shadow-lift); }
+
+.rc-top { display: flex; align-items: center; gap: var(--s1); flex-wrap: wrap; }
+.rc-plat { font-family: var(--mono); font-size: 10.5px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--acc); }
+.rc-plat a { color: inherit; text-decoration: none; display: inline-flex; align-items: center; gap: 3px; }
+.rc-plat a:hover { text-decoration: underline; }
+.rc-top .badge { margin-left: auto; }
+.rc-prog { margin: 0; font-size: 14px; font-weight: 600; line-height: 1.35; letter-spacing: -0.005em; }
+
+.rc-chips { display: flex; flex-wrap: wrap; gap: var(--s1); }
+.rc-cd, .rc-crunch { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: 999px; font-size: 11.5px; font-weight: 500; }
+.rc-crunch { color: var(--warn); background: rgba(var(--warn-rgb), 0.12); }
+
+.rc-meta { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s2) var(--s3); padding-top: var(--s2); border-top: 1px solid var(--line2); }
+.rc-f { min-width: 0; }
+/* Nama tahap boleh sepanjang "Seleksi tingkat daerah — jadwal Lanud"; dua baris
+   cukup, dan memotongnya lebih baik daripada mendorong tanggalnya turun. */
+.rc-k {
+  font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.07em; text-transform: uppercase; color: var(--dim);
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.rc-v { margin-top: 2px; font-size: 12.5px; color: var(--text); }
+
+.rc-note { font-size: 11.5px; line-height: 1.5; color: var(--muted); background: var(--sunk); border-radius: var(--r1); padding: var(--s2); }
+.rc-note p { margin: 0; }
+.rc-note.clip p { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.rc-more { margin-top: 5px; padding: 0; border: none; background: none; font-family: inherit; font-size: 11px; font-weight: 500; color: var(--accent); cursor: pointer; }
+.rc-more:hover { text-decoration: underline; }
+
+.rc-links { display: flex; flex-wrap: wrap; gap: var(--s1); margin-top: auto; padding-top: var(--s1); }
+.rc-links a {
+  display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px;
+  border: 1px solid var(--line); border-radius: var(--r1);
+  font-size: 11.5px; font-weight: 500; color: var(--muted); text-decoration: none;
+  transition: color 0.12s, background 0.12s;
+}
+.rc-links a:hover { color: var(--text); background: var(--sunk); }
+
+/* ==== C · lini masa (Gantt) ============================================
    Menggantikan "rel" lama yang berskala persen dan menempel di daftar padat.
 
    Dua ukuran yang mengikat seluruh bagian ini, dan keduanya hanya punya SATU
@@ -447,7 +503,7 @@ html[data-theme="dark"] .viewbtn.on { background: var(--line); }
 .gtip-when { font-size: 11.5px; color: var(--text); }
 .gtip-note { margin-top: 6px; padding-top: 6px; border-top: 1px solid var(--line2); font-size: 11px; color: var(--dim); line-height: 1.4; }
 
-/* ==== C · agenda ======================================================= */
+/* ==== D · agenda ======================================================= */
 .spine { display: grid; grid-template-columns: 110px minmax(0, 1fr); }
 .spine-month { padding-top: var(--s3); }
 .spine-month .m { font-family: var(--serif); font-size: 28px; line-height: 1; font-weight: 400; }
@@ -464,7 +520,7 @@ html[data-theme="dark"] .viewbtn.on { background: var(--line); }
 .spine-title a:hover { text-decoration: underline; }
 .spine-what { text-align: right; font-size: 11.5px; color: var(--dim); }
 
-/* ==== D · papan ======================================================== */
+/* ==== E · papan ======================================================== */
 .board { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: var(--s2); align-items: start; }
 .col { display: flex; flex-direction: column; gap: var(--s2); min-width: 0; }
 .col-head { display: flex; align-items: center; gap: var(--s1); padding: 0 2px var(--s1); }
@@ -500,7 +556,10 @@ html[data-theme="dark"] .viewbtn.on { background: var(--line); }
 .feedbar > span { flex-basis: 100%; color: var(--dim); font-size: 11.5px; }
 
 /* ==== lebar menengah =================================================== */
-@media (max-width: 1250px) { .board { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 1250px) {
+  .board { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .rcards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
 
 /* Yang dilepas lebih dulu adalah Reg Tutup, bukan "yang dihitung" dan "sisa" —
    dua kolom terakhir itu justru yang paling dipakai. */
@@ -581,6 +640,9 @@ html[data-theme="dark"] .viewbtn.on { background: var(--line); }
 
   /* Gantt tetap berguna di layar sempit karena memang digulir ke samping;
      yang menyusut kolom namanya, bukan jalur waktunya */
+  .rcards { grid-template-columns: minmax(0, 1fr); gap: var(--s2); }
+  .rcard { padding: var(--s2) var(--s3); }
+
   .gantt { --glabel: 150px; padding: var(--s2); }
   .gantt-legend { width: 100%; margin-left: 0; }
   .gantt-scroll { max-height: 62vh; }

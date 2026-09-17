@@ -3,7 +3,7 @@
 import { useState } from "react";
 import DateText from "../DateText";
 import TipeTag from "../TipeTag";
-import { platformColor, statusColor } from "@/lib/palette";
+import { countdownTone, platformColor, statusColor } from "@/lib/palette";
 import { countdown, nextEvent, statusOf, toIso } from "@/lib/status";
 import { STATUSES, type Entry, type Status } from "@/lib/types";
 
@@ -96,13 +96,7 @@ export default function BoardView({
                   )}
 
                   {cd && (
-                    <div
-                      className="bcard-cd"
-                      style={{
-                        background: `rgba(var(--${s === "Buka" ? "warn" : s === "Menunggu Hasil" ? "hasil" : "slate"}-rgb), 0.12)`,
-                        color: statusColor(s === "Buka" ? "Tes Berlangsung" : s),
-                      }}
-                    >
+                    <div className="bcard-cd" style={countdownTone(s)}>
                       {cd}
                     </div>
                   )}

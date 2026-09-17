@@ -50,6 +50,19 @@ export function statusColor(status: Status): string {
   return `var(${STATUS_VAR[status]})`;
 }
 
+/**
+ * Warna chip hitung mundur: latar lembut, teks pekat yang masih terbaca di
+ * atasnya. "Buka" sengaja memakai nada jingga, bukan hijau - yang dihitung
+ * mundur adalah tanggal TUTUP, jadi warnanya harus terasa mendesak.
+ */
+export function countdownTone(status: Status): { background: string; color: string } {
+  const bg = status === "Buka" ? "warn" : status === "Menunggu Hasil" ? "hasil" : "slate";
+  return {
+    background: `rgba(var(--${bg}-rgb), 0.12)`,
+    color: statusColor(status === "Buka" ? "Tes Berlangsung" : status),
+  };
+}
+
 export const STATUS_BADGE: Record<Status, string> = {
   Buka: "b-buka",
   "Tes Berlangsung": "b-tes",
