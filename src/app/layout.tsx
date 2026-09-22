@@ -16,10 +16,17 @@ export const metadata: Metadata = {
     // meleset sedikit saja, judulnya tertimpa jam. Tidak sepadan.
     statusBarStyle: "default",
   },
+  /*
+   * Favicon memakai berkas TRANSPARAN, apple-touch-icon memakai yang berlatar
+   * putih. Browser menaruh favicon langsung di atas warna bilah tabnya sendiri,
+   * jadi ubin putih di situ tampak seperti stiker tertempel. iOS sebaliknya:
+   * ia tidak menambahkan latar apa pun, sehingga PNG transparan berubah jadi
+   * logo merah di atas kotak HITAM di layar utama.
+   */
   icons: {
     icon: [
-      { url: "/logo/icon-32.png", sizes: "32x32", type: "image/png" },
-      { url: "/logo/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/logo/favicon-32.png", sizes: "32x32", type: "image/png" },
+      { url: "/logo/favicon-192.png", sizes: "192x192", type: "image/png" },
     ],
     apple: "/logo/apple-touch-icon.png",
   },
