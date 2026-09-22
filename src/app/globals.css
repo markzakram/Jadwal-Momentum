@@ -44,6 +44,11 @@ html[data-theme="light"] {
   --text: #14171c;
   --muted: #5f6774;
   --dim: #97a0ae;
+  /* Merah Product Momentum. Dua nilai karena satu nilai tidak mungkin:
+     merah tua #8f011e memberi kontras 9.58 di sini tapi hanya 1.89 di tema
+     gelap - praktis tak terlihat. */
+  --brand: #8f011e;
+
   --shadow: 0 1px 2px rgba(18, 24, 40, 0.05);
   --shadow-lift: 0 6px 20px rgba(18, 24, 40, 0.1);
 
@@ -72,6 +77,10 @@ html[data-theme="dark"] {
   --text: #e8ebf2;
   --muted: #98a1b2;
   --dim: #667080;
+  /* Merah terang merek: 4.00 terhadap panel gelap - lolos ambang teks besar
+     (3.0), dan nama produk memang 15px tebal. */
+  --brand: #ec0a22;
+
   --shadow: none;
   --shadow-lift: 0 8px 26px rgba(0, 0, 0, 0.55);
 
@@ -152,12 +161,25 @@ header.top { position: sticky; top: 0; z-index: 40; background: var(--panel); bo
    kepala halaman menempel di tepi layar sementara seluruh isi di bawahnya
    masuk 24px - tidak pernah sejajar. */
 .head-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s3); padding-top: var(--s2); padding-bottom: var(--s2); min-height: 56px; }
-.brand { display: flex; align-items: baseline; gap: var(--s2); }
-/* align-self sendiri, karena .brand merapatkan anaknya ke garis dasar teks -
-   gambar yang ikut garis dasar akan tampak melorot. */
-.brand-mark { width: 26px; height: 26px; border-radius: 6px; flex: none; align-self: center; }
-.brand h1 { margin: 0; font-size: 16px; font-weight: 600; letter-spacing: -0.015em; }
-.brand span { font-family: var(--mono); font-size: 10px; color: var(--dim); letter-spacing: 0.1em; }
+/* Dua baris: nama produk + versi di atas, divisi di bawah - sama seperti
+   ProductTrack, supaya kedua aplikasi terbaca sebagai satu keluarga. */
+.brand { display: flex; align-items: center; gap: var(--s2); min-width: 0; }
+.brand-mark { width: 34px; height: 34px; border-radius: 8px; flex: none; background: #fff; }
+.brand-text { min-width: 0; }
+.brand h1 {
+  margin: 0; font-size: 15px; font-weight: 700; letter-spacing: -0.015em; line-height: 1.15;
+  display: flex; align-items: baseline; gap: 5px; white-space: nowrap;
+}
+/* Warna MEREK, bukan --accent: aksen bisa diganti pengguna jadi delapan warna,
+   dan nama produk yang berubah-ubah warna bukan lagi identitas. */
+.brand h1 b { color: var(--brand); font-weight: 700; }
+/* align-self: flex-start, bukan baseline - angka versi menempel ke atas seperti
+   catatan kaki, bukan duduk sejajar dengan nama produk. */
+/* flex: none WAJIB. Tanpa itu, di layar sempit kepala halaman mengecilkan
+   item-itemnya sebelum membentuk baris kedua, dan yang paling pendek - nomor
+   versi - menyusut sampai lebar nol. Ia lenyap tanpa jejak. */
+.brand-ver { flex: none; align-self: flex-start; font-family: var(--mono); font-size: 9.5px; font-weight: 600; color: var(--dim); cursor: default; }
+.brand p { margin: 2px 0 0; font-family: var(--mono); font-size: 9.5px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim); }
 .head-ctrl { margin-left: auto; display: flex; align-items: center; gap: var(--s2); flex-wrap: wrap; }
 .date-pill { font-family: var(--mono); font-size: 11.5px; color: var(--muted); white-space: nowrap; }
 
@@ -638,8 +660,11 @@ html[data-theme="dark"] .viewbtn.on { background: var(--line); }
   /* Tiga baris kendali itu wajar di layar sempit, tapi tiap barisnya harus
      serapat mungkin — kepala halaman ini sticky, jadi tingginya dibayar terus. */
   .head-row { gap: var(--s1); padding: var(--s1) 0; min-height: 0; }
-  .brand h1 { font-size: 15px; }
-  .brand span { display: none; }
+  /* Dulu di sini ada `.brand span { display: none }` untuk menyembunyikan
+     "TIM MARKETING". Markupnya sudah berganti - divisi kini sebuah <p>, dan
+     satu-satunya <span> yang tersisa adalah lencana versi. Aturan itu
+     membuatnya lenyap di ponsel tanpa jejak, jadi dihapus. Ukuran judul juga
+     sudah 15px sejak awal, tidak perlu ditimpa lagi. */
   .head-row > .seg { width: 100%; }
   .head-row > .seg button { flex: 1; text-align: center; padding: 6px 4px; font-size: 12px; }
   .head-ctrl { width: 100%; margin-left: 0; justify-content: space-between; gap: var(--s1); }

@@ -13,6 +13,7 @@ import CardView from "./views/CardView";
 import DenseView from "./views/DenseView";
 import GanttView from "./views/GanttView";
 import { crunchIds, findCrunch } from "@/lib/conflicts";
+import { APP_VERSION, BUILD_SHA } from "@/lib/version";
 import { rowStatuses } from "@/lib/confidence";
 import { daysBetween, fmt, nextEvent, pd, statusOf, tWindow } from "@/lib/status";
 import {
@@ -186,9 +187,19 @@ export default function Dashboard({
           <div className="brand">
             {/* Kubus Product Momentum di atas ubin putih, bukan logo telanjang:
                 wajah merah tuanya (#8f011e) nyaris lenyap di panel gelap. */}
-            <img className="brand-mark" src="/logo/mark-64.png" alt="Product Momentum" width={26} height={26} />
-            <h1>Jadwal Seleksi</h1>
-            <span>TIM MARKETING</span>
+            <img className="brand-mark" src="/logo/mark-64.png" alt="" width={34} height={34} />
+            <div className="brand-text">
+              <h1>
+                Product<b>Momentum</b>
+                <span
+                  className="brand-ver"
+                  title={BUILD_SHA ? `Build ${BUILD_SHA}` : "Dijalankan dari mesin sendiri"}
+                >
+                  v{APP_VERSION}
+                </span>
+              </h1>
+              <p>Divisi Produk</p>
+            </div>
           </div>
 
           <div className="head-ctrl">
