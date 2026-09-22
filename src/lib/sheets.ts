@@ -1,12 +1,14 @@
 import fallbackRows from "@/data/fallback.json";
+import { accessToken, serviceAccount } from "./google-auth";
 import type { Entry, SheetKey, SheetPayload, Tipe } from "./types";
 
 const REVALIDATE_SECONDS = 300;
 
 /**
- * URL CSV per sheet. Dua cara:
+ * URL CSV per sheet - dua dari tiga cara membaca sheet:
  *   1. GOOGLE_SHEET_ID  - butuh spreadsheet di-share "anyone with the link can view"
  *   2. SHEET_CSV_<KEY>  - URL "Publish to web" lengkap, menang atas cara 1
+ * Cara ketiga (service account) tidak lewat CSV sama sekali; lihat getSheetData.
  */
 function csvUrl(sheet: SheetKey): string | null {
   const explicit = process.env[`SHEET_CSV_${sheet.toUpperCase()}`];
@@ -134,7 +136,14 @@ const DATE_FIELDS: (keyof Entry)[] = [
  * Kolom dipetakan lewat nama, jadi urutan kolom boleh berubah.
  */
 export function rowsFromCsv(text: string): Entry[] {
-  const table = parseCsv(text);
+  return rowsFromTable(parseCsv(text));
+}
+
+/**
+ * Inti pembacanya bekerja pada tabel, bukan teks CSV - jalur service account
+ * menerima larik dari Sheets API dan memakai pemetaan kolom yang sama persis.
+ */
+export function rowsFromTable(table: string[][]): Entry[] {
   const headerIdx = table.findIndex((r) => {
     const cells = r.map((c) => c.trim().toLowerCase());
     return cells.includes("tipe") && cells.includes("platform");
@@ -185,8 +194,65 @@ export function rowsFromCsv(text: string): Entry[] {
 
 const FALLBACK = fallbackRows as Entry[];
 
+/**
+ * Cara ketiga: Sheets API dengan service account.
+ *
+ * Ini satu-satunya cara yang tidak menuntut spreadsheet dibuka ke publik -
+ * cukup di-share ke satu alamat robot. Banyak domain Workspace memang melarang
+ * berbagi publik, jadi bagi sebagian orang inilah satu-satunya jalan.
+ *
+ * Aksesnya sengaja `spreadsheets.readonly`: halaman ini tidak pernah menulis,
+ * dan kunci yang sama mungkin dipakai proyek lain yang memang menulis.
+ */
+async function tableFromApi(sheet: SheetKey, id: string): Promise<string[][]> {
+  const token = await accessToken("https://www.googleapis.com/auth/spreadsheets.readonly");
+  // Nama sheet sebagai rentang = seluruh bagian terpakai, jadi tidak ada batas
+  // baris/kolom yang harus ditebak dan diperbarui saat sheet bertambah.
+  const url =
+    `https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(id)}` +
+    `/values/${encodeURIComponent(sheet)}?valueRenderOption=FORMATTED_VALUE`;
+
+  const res = await fetch(url, {
+    headers: { authorization: `Bearer ${token}` },
+    next: { revalidate: REVALIDATE_SECONDS },
+  });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+  const json = (await res.json()) as { values?: string[][] };
+  return json.values ?? [];
+}
+
 export async function getSheetData(sheet: SheetKey): Promise<SheetPayload> {
   const fetchedAt = new Date().toISOString();
+  const id = process.env.GOOGLE_SHEET_ID;
+
+  /*
+   * Tangga prioritas, dari yang paling tegas ke yang paling umum:
+   *   1. SHEET_CSV_<KEY>    URL publish-to-web yang ditulis tangan untuk sheet ini
+   *   2. service account    butuh GOOGLE_SHEET_ID juga; tidak perlu sheet publik
+   *   3. GOOGLE_SHEET_ID    ekspor CSV biasa; sheet harus bisa dibaca siapa saja
+   */
+  const explicitCsv = process.env[`SHEET_CSV_${sheet.toUpperCase()}`];
+  const viaApi = !explicitCsv && !!id && !!serviceAccount();
+
+  if (viaApi) {
+    try {
+      const rows = rowsFromTable(await tableFromApi(sheet, id!));
+      if (!rows.length) throw new Error("tidak ada baris terbaca - cek nama sheet dan hak aksesnya");
+      return { rows, source: "sheet", fetchedAt };
+    } catch (err) {
+      const reason = err instanceof Error ? err.message : String(err);
+      return {
+        rows: sheet === "DATA" ? FALLBACK : [],
+        source: "fallback",
+        fetchedAt,
+        warning:
+          `Gagal membaca sheet ${sheet} lewat service account (${reason}). ` +
+          `Pastikan spreadsheet sudah di-share ke alamat service account-nya. Menampilkan data cadangan.`,
+      };
+    }
+  }
+
   const url = csvUrl(sheet);
 
   if (!url) {

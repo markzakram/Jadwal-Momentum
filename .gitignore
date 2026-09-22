@@ -8,9 +8,21 @@ build/
 *.tsbuildinfo
 next-env.d.ts
 
+# kunci service account - JANGAN pernah ikut ter-commit
+credential.json
+credentials.json
+*-credentials.json
+*.credentials.json
+service-account.json
+*-service-account.json
+*.pem
+
 # file kerja, bukan bagian aplikasi
 *.xlsx
 *.pdf
 
 # kanvas desain hasil rakitan - sumbernya design/*.dc.html
 design/dashboard-jadwal-seleksi.html
+
+# cadangan sheet sebelum penyuntingan - lokal saja
+backup/

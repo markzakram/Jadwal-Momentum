@@ -98,6 +98,15 @@ html.theme-switching *,
 html.theme-switching *::before,
 html.theme-switching *::after { transition: none !important; }
 
+/* ==== dipasang di layar utama ==========================================
+   Yang membedakan "situs di ponsel" dari "aplikasi di ponsel" hampir semuanya
+   soal tepi layar dan umpan balik sentuhan, bukan tata letak. */
+html {
+  /* iOS membesarkan teks sendiri saat berputar ke melintang - itu merusak
+     seluruh skala teks yang sudah diatur. */
+  -webkit-text-size-adjust: 100%;
+}
+
 body {
   margin: 0;
   min-height: 100vh;
@@ -107,6 +116,26 @@ body {
   font-size: 13px;
   line-height: 1.45;
   -webkit-font-smoothing: antialiased;
+  /* Poni dan sudut melengkung: isi tidak boleh masuk ke bawah keduanya. */
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+/* Kilatan abu-abu saat disentuh adalah ciri khas halaman web. Dihapus, dan
+   diganti umpan balik yang dikendalikan sendiri di :active - bukan dihapus
+   begitu saja, karena sentuhan tanpa reaksi terasa seperti aplikasi macet. */
+button, a, summary, .tab, .viewbtn, .sw, .seg a, .seg button { -webkit-tap-highlight-color: transparent; }
+@media (hover: none) {
+  button:active, .tab:active, .viewbtn:active, .seg a:active, .seg button:active,
+  .rc-links a:active, .btn-mini:active { opacity: 0.6; }
+}
+
+@media (display-mode: standalone) {
+  /* Tarik-untuk-muat-ulang dan pantulan karet di ujung daftar hanya masuk akal
+     di dalam browser. Di layar utama, keduanya terasa seperti cacat. */
+  body { overscroll-behavior-y: none; }
+  /* Ruang untuk garis indikator beranda di iPhone. */
+  main { padding-bottom: calc(var(--s5) + env(safe-area-inset-bottom)); }
 }
 
 .wrap { max-width: 1360px; margin: 0 auto; padding: 0 var(--s4); }

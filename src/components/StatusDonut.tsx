@@ -11,8 +11,22 @@ const R_IN = 53; // cutout ~62%, sama seperti versi Chart.js lama
 const CX = SIZE / 2;
 const CY = SIZE / 2;
 
+/**
+ * Koordinat dibulatkan ke tiga desimal, bukan dipakai apa adanya.
+ *
+ * Math.cos dan Math.sin TIDAK dijamin memberi hasil yang sama persis antar
+ * mesin JavaScript - Node dan browser memakai build V8 yang berbeda, dan
+ * digit terakhirnya bisa meleset. Selisih 1e-16 itu tak terlihat mata, tapi
+ * membuat atribut `d` yang dirender server tidak sama persis dengan yang
+ * dihitung ulang di browser, dan React melaporkannya sebagai hydration
+ * mismatch yang - kata pesannya sendiri - "won't be patched up".
+ *
+ * Pada kanvas 190 satuan, tiga desimal jauh lebih halus dari satu piksel.
+ */
+const n3 = (v: number) => v.toFixed(3);
+
 function sector(a0: number, a1: number): string {
-  const pt = (r: number, a: number) => [CX + r * Math.cos(a), CY + r * Math.sin(a)] as const;
+  const pt = (r: number, a: number) => [n3(CX + r * Math.cos(a)), n3(CY + r * Math.sin(a))] as const;
   const large = a1 - a0 > Math.PI ? 1 : 0;
   const [x0, y0] = pt(R_OUT, a0);
   const [x1, y1] = pt(R_OUT, a1);

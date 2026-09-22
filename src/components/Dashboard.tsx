@@ -58,22 +58,23 @@ export default function Dashboard({
     const now = new Date();
     const local = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
     if (local !== serverToday) setTodayIso(local);
-    const storedView = document.documentElement.dataset.view as ViewKey | undefined;
+    // Keduanya dibaca dari atribut <html>, bukan langsung dari localStorage:
+    // skrip di layout sudah memasangnya sebelum paint pertama, jadi tidak ada
+    // kedipan dari tab "Real" ke tab yang sebenarnya dipilih.
+    const el = document.documentElement;
+    const storedView = el.dataset.view as ViewKey | undefined;
     if (storedView && VIEWS.some((v) => v.key === storedView)) setView(storedView);
-    try {
-      const storedTab = localStorage.getItem("tab") as TabKey | null;
-      if (storedTab && (TABS as readonly string[]).includes(storedTab)) setTab(storedTab);
-    } catch {
-      /* mode privat: pilihan tidak tersimpan, tampilan tetap jalan */
-    }
+    const storedTab = el.dataset.tab as TabKey | undefined;
+    if (storedTab && (TABS as readonly string[]).includes(storedTab)) setTab(storedTab);
   }, [serverToday]);
 
   function pickTab(t: TabKey) {
     setTab(t);
+    document.documentElement.dataset.tab = t;
     try {
       localStorage.setItem("tab", t);
     } catch {
-      /* idem */
+      /* mode privat: pilihan tidak tersimpan, tampilan tetap jalan */
     }
   }
 
