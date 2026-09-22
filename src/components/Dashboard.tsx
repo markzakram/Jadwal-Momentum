@@ -184,6 +184,9 @@ export default function Dashboard({
       <header className="top">
         <div className="wrap head-row">
           <div className="brand">
+            {/* Kubus Product Momentum di atas ubin putih, bukan logo telanjang:
+                wajah merah tuanya (#8f011e) nyaris lenyap di panel gelap. */}
+            <img className="brand-mark" src="/logo/mark-64.png" alt="Product Momentum" width={26} height={26} />
             <h1>Jadwal Seleksi</h1>
             <span>TIM MARKETING</span>
           </div>

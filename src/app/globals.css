@@ -147,8 +147,15 @@ a.plain:hover { text-decoration: underline; }
 
 /* ==== kepala =========================================================== */
 header.top { position: sticky; top: 0; z-index: 40; background: var(--panel); border-bottom: 1px solid var(--line); }
-.head-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s3); padding: var(--s2) 0; min-height: 56px; }
+/* padding ATAS-BAWAH saja. Properti ringkas `padding: var(--s2) 0` ikut
+   me-nol-kan padding kiri-kanan yang diwarisi dari .wrap, dan itu membuat isi
+   kepala halaman menempel di tepi layar sementara seluruh isi di bawahnya
+   masuk 24px - tidak pernah sejajar. */
+.head-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s3); padding-top: var(--s2); padding-bottom: var(--s2); min-height: 56px; }
 .brand { display: flex; align-items: baseline; gap: var(--s2); }
+/* align-self sendiri, karena .brand merapatkan anaknya ke garis dasar teks -
+   gambar yang ikut garis dasar akan tampak melorot. */
+.brand-mark { width: 26px; height: 26px; border-radius: 6px; flex: none; align-self: center; }
 .brand h1 { margin: 0; font-size: 16px; font-weight: 600; letter-spacing: -0.015em; }
 .brand span { font-family: var(--mono); font-size: 10px; color: var(--dim); letter-spacing: 0.1em; }
 .head-ctrl { margin-left: auto; display: flex; align-items: center; gap: var(--s2); flex-wrap: wrap; }
