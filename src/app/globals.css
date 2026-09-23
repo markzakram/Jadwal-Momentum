@@ -15,6 +15,10 @@
 :root {
   --accent: #10b981;
   --accent-rgb: 16, 185, 129;
+  /* Tinta aksen untuk TEKS - lihat ACCENTS di lib/palette.ts. Warna asli
+     emerald cuma 2.54:1 di latar putih; tinta terangnya 5.07. */
+  --accent-ink-l: #0b7e58;
+  --accent-ink-d: #10b981;
 
   --s1: 6px;
   --s2: 10px;
@@ -48,6 +52,7 @@ html[data-theme="light"] {
      merah tua #8f011e memberi kontras 9.58 di sini tapi hanya 1.89 di tema
      gelap - praktis tak terlihat. */
   --brand: #8f011e;
+  --accent-ink: var(--accent-ink-l);
 
   --shadow: 0 1px 2px rgba(18, 24, 40, 0.05);
   --shadow-lift: 0 6px 20px rgba(18, 24, 40, 0.1);
@@ -80,6 +85,7 @@ html[data-theme="dark"] {
   /* Merah terang merek: 4.00 terhadap panel gelap - lolos ambang teks besar
      (3.0), dan nama produk memang 15px tebal. */
   --brand: #ec0a22;
+  --accent-ink: var(--accent-ink-d);
 
   --shadow: none;
   --shadow-lift: 0 8px 26px rgba(0, 0, 0, 0.55);
@@ -101,8 +107,15 @@ html[data-theme="dark"] {
 
 * { box-sizing: border-box; }
 
-/* Dipasang sekejap oleh ThemeControls saat tema berganti - lihat alasannya di
-   sana. Tanpa ini, tiap elemen ber-`transition: color` menahan warna tema lama. */
+/* ATURAN BERKAS: jangan pasang `transition` pada properti yang nilainya dari
+   var() - color, background, border-color, box-shadow. Di mesin ini transisi
+   semacam itu bisa MEMBEKU di nilai awalnya dan tidak pernah selesai. Sudah dua
+   kali terjadi: saat ganti tema (warna tema lama tertahan), dan saat tab
+   tersimpan dipulihkan sesudah hidrasi (tab yang salah tampak aktif). Yang
+   tersisa hanya transform dan opacity, yang tidak memakai var().
+
+   Kelas di bawah dipasang sekejap oleh ThemeControls saat tema berganti -
+   dipertahankan sebagai lapis pengaman kalau aturan di atas suatu saat dilanggar. */
 html.theme-switching *,
 html.theme-switching *::before,
 html.theme-switching *::after { transition: none !important; }
@@ -143,15 +156,18 @@ button, a, summary, .tab, .viewbtn, .sw, .seg a, .seg button { -webkit-tap-highl
   /* Tarik-untuk-muat-ulang dan pantulan karet di ujung daftar hanya masuk akal
      di dalam browser. Di layar utama, keduanya terasa seperti cacat. */
   body { overscroll-behavior-y: none; }
-  /* Ruang untuk garis indikator beranda di iPhone. */
-  main { padding-bottom: calc(var(--s5) + env(safe-area-inset-bottom)); }
+  /* Ruang untuk garis indikator beranda di iPhone. Selektornya `main.wrap`,
+     bukan `main`: elemen ini juga ber-kelas .wrap, dan `.wrap { padding: 0 … }`
+     mengalahkan selektor elemen apa pun urutannya - aturan ini dulu tidak
+     pernah berlaku sama sekali. */
+  main.wrap { padding-bottom: calc(var(--s5) + env(safe-area-inset-bottom)); }
 }
 
 .wrap { max-width: 1360px; margin: 0 auto; padding: 0 var(--s4); }
 .mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
 .only-sr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 main { padding: var(--s4) 0 var(--s5); }
-a.plain { color: var(--accent); text-decoration: none; }
+a.plain { color: var(--accent-ink); text-decoration: none; }
 a.plain:hover { text-decoration: underline; }
 
 /* ==== kepala =========================================================== */
@@ -188,21 +204,21 @@ header.top { position: sticky; top: 0; z-index: 40; background: var(--panel); bo
 .seg a, .seg button {
   border: none; background: none; color: var(--muted); font-family: inherit;
   font-size: 12.5px; font-weight: 500; padding: 6px 14px; border-radius: 6px;
-  cursor: pointer; text-decoration: none; white-space: nowrap; transition: color 0.12s;
+  cursor: pointer; text-decoration: none; white-space: nowrap;
 }
 .seg a:hover, .seg button:hover { color: var(--text); }
 .seg a.on, .seg button.on { background: var(--panel); color: var(--text); box-shadow: var(--shadow); }
 html[data-theme="dark"] .seg a.on, html[data-theme="dark"] .seg button.on { background: var(--line); }
 
 .swatches { display: flex; gap: var(--s1); padding: 5px 9px; border-radius: 999px; background: var(--sunk); }
-.sw { width: 18px; height: 18px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; padding: 0; transition: transform 0.12s, border-color 0.12s; }
+.sw { width: 18px; height: 18px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; padding: 0; transition: transform 0.12s; }
 .sw:hover { transform: scale(1.14); }
 .sw.on { border-color: var(--text); }
 
 .icon-btn {
   width: 34px; height: 34px; border-radius: var(--r1); border: 1px solid var(--line);
   background: var(--panel); color: var(--text); cursor: pointer; font-size: 15px;
-  display: grid; place-items: center; transition: background 0.12s;
+  display: grid; place-items: center;
 }
 .icon-btn:hover { background: var(--sunk); }
 
@@ -211,6 +227,7 @@ html[data-theme="dark"] .seg a.on, html[data-theme="dark"] .seg button.on { back
 .kpi { padding: var(--s3) var(--s4); border-right: 1px solid var(--line); }
 .kpi:last-child { border-right: none; }
 .kpi .k { font-family: var(--mono); font-size: 10px; color: var(--dim); letter-spacing: 0.1em; }
+.kpi .k-s { display: none; }
 .kpi .n { font-family: var(--mono); font-size: 32px; font-weight: 500; line-height: 1.05; margin-top: var(--s1); }
 .kpi.g .n { color: var(--ok); }
 .kpi.w .n, .kpi.o .n { color: var(--warn); }
@@ -314,7 +331,7 @@ table.tblview td.n { text-align: right; font-family: var(--mono); font-variant-n
 .searchbar input { flex: 1; min-width: 200px; padding-left: 38px; }
 .searchbar input::placeholder { color: var(--dim); }
 .searchbar input:focus, .searchbar select:focus, .resultbar select:focus {
-  border-color: var(--accent); box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.16);
+  border-color: var(--accent-ink); box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.16);
 }
 
 /* ==== baris tab + pemilih tampilan =====================================
@@ -327,22 +344,22 @@ table.tblview td.n { text-align: right; font-family: var(--mono); font-variant-n
   background: none; border: none; font-family: inherit; cursor: pointer;
   font-size: 13.5px; font-weight: 500; color: var(--muted);
   padding: var(--s2) 0; display: inline-flex; align-items: center; gap: var(--s1);
-  border-bottom: 2px solid transparent; margin-bottom: -1px; transition: color 0.12s;
+  border-bottom: 2px solid transparent; margin-bottom: -1px;
 }
 .tab:hover { color: var(--text); }
-.tab.on { color: var(--accent); border-bottom-color: var(--accent); font-weight: 600; }
+.tab.on { color: var(--accent-ink); border-bottom-color: var(--accent-ink); font-weight: 600; }
 .tab em { font-style: normal; font-family: var(--mono); font-size: 11px; color: var(--dim); background: var(--sunk); padding: 1px 7px; border-radius: 999px; }
-.tab.on em { color: var(--accent); background: rgba(var(--accent-rgb), 0.13); }
+.tab.on em { color: var(--accent-ink); background: rgba(var(--accent-rgb), 0.13); }
 
 .viewbtns { margin-left: auto; margin-bottom: var(--s1); display: flex; gap: 2px; padding: 3px; background: var(--sunk); border-radius: var(--r1); }
 .viewbtn {
   width: 34px; height: 30px; display: grid; place-items: center;
   border: none; background: none; border-radius: 6px; cursor: pointer; color: var(--muted);
-  transition: color 0.12s, background 0.12s;
 }
 .viewbtn:hover { color: var(--text); }
 .viewbtn.on { background: var(--panel); color: var(--text); box-shadow: var(--shadow); }
 html[data-theme="dark"] .viewbtn.on { background: var(--line); }
+.viewbtn-lbl { display: none; }
 
 /* ==== baris hasil ====================================================== */
 .resultbar { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s2) var(--s4); margin-bottom: var(--s3); }
@@ -414,7 +431,54 @@ html[data-theme="dark"] .viewbtn.on { background: var(--line); }
 .dense-sisa { font-family: var(--mono); font-size: 11.5px; text-align: right; }
 .crunch-mark { color: var(--warn); margin-right: 3px; }
 
-/* ==== B · kartu rincian ================================================
+/* ==== B · momen ========================================================
+   Jadwal yang sama dibaca dari sisi "minggu ini kita mendorong apa". Dua momen
+   persiapan melebar (3 dari 6 kolom) karena di situlah orang sudah terdaftar
+   dan wajib bersiap; tiga momen pendaftaran lebih sempit (2 dari 6) karena
+   jendelanya cuma satu-dua minggu dan daftarnya memang pendek. */
+.momen-top { display: flex; align-items: baseline; flex-wrap: wrap; gap: var(--s1) var(--s3); margin-bottom: var(--s3); }
+.momen-top h3 { margin: 0; font-size: 14px; font-weight: 600; }
+.momen-top .mono { font-size: 11px; color: var(--dim); }
+.momen-top p { margin: 0; flex-basis: 100%; font-size: 12px; color: var(--muted); }
+
+.momen-grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: var(--s3); align-items: start; }
+.mgroup {
+  grid-column: span 2; min-width: 0;
+  display: flex; flex-direction: column; gap: var(--s2);
+  background: var(--panel); border: 1px solid var(--line); border-radius: var(--r2); padding: var(--s3);
+}
+.mgroup.prep { grid-column: span 3; border-top: 3px solid var(--accent-ink); }
+.mgroup.kosong { opacity: 0.7; }
+.mgroup-head { display: flex; align-items: center; gap: var(--s1); }
+.mgroup-ico { display: inline-flex; color: var(--muted); }
+.mgroup.prep .mgroup-ico { color: var(--accent-ink); }
+.mgroup-head b { font-size: 13px; font-weight: 600; }
+.mgroup-head em { margin-left: auto; font-style: normal; font-family: var(--mono); font-size: 11px; color: var(--dim); background: var(--sunk); padding: 1px 8px; border-radius: 999px; }
+.mgroup-arahan { margin: 0; font-size: 11.5px; line-height: 1.5; color: var(--muted); }
+.mgroup-empty { font-size: 12px; color: var(--dim); padding: 4px 0; }
+
+.mlist { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--s1); }
+.mitem { display: flex; flex-direction: column; gap: 4px; padding: var(--s2); background: var(--panel2); border: 1px solid var(--line2); border-radius: var(--r1); }
+.mitem-top { display: flex; align-items: center; gap: 5px; min-width: 0; }
+.mitem-plat { font-family: var(--mono); font-size: 10px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mitem-days { margin-left: auto; flex: none; font-family: var(--mono); font-size: 11px; color: var(--muted); white-space: nowrap; }
+.mitem-days.dekat { color: var(--warn); font-weight: 600; }
+.mitem-prog { font-size: 12.5px; font-weight: 600; line-height: 1.35; }
+.mitem-prog a { color: inherit; text-decoration: none; }
+.mitem-prog a:hover { text-decoration: underline; }
+.mitem-prog.tanpa { font-weight: 400; font-style: italic; color: var(--dim); }
+.mgroup-more { align-self: flex-start; padding: 2px 0; border: none; background: none; font-family: inherit; font-size: 11.5px; font-weight: 500; color: var(--muted); cursor: pointer; }
+.mgroup-more:hover { color: var(--text); }
+.mitem-bawah { display: flex; align-items: center; flex-wrap: wrap; gap: var(--s1) var(--s2); }
+.mitem-when { font-size: 11.5px; color: var(--muted); }
+.mitem-ebook {
+  margin-left: auto; display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px;
+  border: 1px solid var(--line); border-radius: 6px;
+  font-size: 11px; font-weight: 500; color: var(--muted); text-decoration: none;
+}
+.mitem-ebook:hover { color: var(--text); background: var(--sunk); }
+
+/* ==== C · kartu rincian ================================================
    Kartu memuat SELURUH isi satu baris sheet, termasuk catatan panjang yang
    tidak muat di tampilan mana pun yang lain. Warna platform hanya jadi garis
    tepi kiri — bukan latar — supaya sebelas warna itu tidak saling berteriak
@@ -424,7 +488,6 @@ html[data-theme="dark"] .viewbtn.on { background: var(--line); }
   background: var(--panel); border: 1px solid var(--line); border-left: 3px solid var(--acc);
   border-radius: var(--r2); padding: var(--s3);
   display: flex; flex-direction: column; gap: var(--s2);
-  transition: box-shadow 0.14s;
 }
 .rcard:hover { box-shadow: var(--shadow-lift); }
 
@@ -448,11 +511,16 @@ html[data-theme="dark"] .viewbtn.on { background: var(--line); }
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
 }
 .rc-v { margin-top: 2px; font-size: 12.5px; color: var(--text); }
+/* Tanggal arsip di bawah tanggal prediksi - kecil dan redup, karena ia
+   pembanding, bukan jadwalnya. */
+.rc-arsip { margin-top: 2px; font-family: var(--mono); font-size: 10px; color: var(--dim); }
+.rc-pembanding { grid-column: 1 / -1; padding-top: var(--s1); border-top: 1px dashed var(--line); font-size: 10.5px; color: var(--dim); }
+.rc-pembanding b { font-weight: 600; color: var(--muted); }
 
 .rc-note { font-size: 11.5px; line-height: 1.5; color: var(--muted); background: var(--sunk); border-radius: var(--r1); padding: var(--s2); }
 .rc-note p { margin: 0; }
 .rc-note.clip p { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-.rc-more { margin-top: 5px; padding: 0; border: none; background: none; font-family: inherit; font-size: 11px; font-weight: 500; color: var(--accent); cursor: pointer; }
+.rc-more { margin-top: 5px; padding: 0; border: none; background: none; font-family: inherit; font-size: 11px; font-weight: 500; color: var(--accent-ink); cursor: pointer; }
 .rc-more:hover { text-decoration: underline; }
 
 .rc-links { display: flex; flex-wrap: wrap; gap: var(--s1); margin-top: auto; padding-top: var(--s1); }
@@ -460,11 +528,21 @@ html[data-theme="dark"] .viewbtn.on { background: var(--line); }
   display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px;
   border: 1px solid var(--line); border-radius: var(--r1);
   font-size: 11.5px; font-weight: 500; color: var(--muted); text-decoration: none;
-  transition: color 0.12s, background 0.12s;
 }
 .rc-links a:hover { color: var(--text); background: var(--sunk); }
+/* Tombol salin mengikuti bentuk tautan di sebelahnya, tapi didorong ke kanan -
+   ia tindakan pada kartu ini, bukan tujuan keluar seperti dua tautan lainnya. */
+.rc-salin {
+  margin-left: auto; display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px;
+  border: 1px solid var(--line); border-radius: var(--r1); background: none; cursor: pointer;
+  font-family: inherit; font-size: 11.5px; font-weight: 500; color: var(--muted);
+}
+.rc-salin:hover { color: var(--text); background: var(--sunk); }
+/* Kartu yang dituju tautan ?id=. outline, bukan box-shadow - yang terakhir
+   berbasis var() dan tidak boleh diberi transisi (lihat aturan di awal berkas). */
+.rcard.fokus { outline: 2px solid var(--accent-ink); outline-offset: 3px; }
 
-/* ==== C · lini masa (Gantt) ============================================
+/* ==== D · lini masa (Gantt) ============================================
    Menggantikan "rel" lama yang berskala persen dan menempel di daftar padat.
 
    Dua ukuran yang mengikat seluruh bagian ini, dan keduanya hanya punya SATU
@@ -525,7 +603,7 @@ html[data-theme="dark"] .viewbtn.on { background: var(--line); }
 }
 .gname { font-size: 11.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .gname a { color: inherit; text-decoration: none; }
-.gname a:hover { color: var(--accent); text-decoration: underline; }
+.gname a:hover { color: var(--accent-ink); text-decoration: underline; }
 
 .ggrow.ghead { background: var(--panel2); }
 .ggrow.ghead .glbl { background: var(--panel2); }
@@ -562,7 +640,7 @@ html[data-theme="dark"] .viewbtn.on { background: var(--line); }
 .gtip-when { font-size: 11.5px; color: var(--text); }
 .gtip-note { margin-top: 6px; padding-top: 6px; border-top: 1px solid var(--line2); font-size: 11px; color: var(--dim); line-height: 1.4; }
 
-/* ==== D · agenda ======================================================= */
+/* ==== E · agenda ======================================================= */
 .spine { display: grid; grid-template-columns: 110px minmax(0, 1fr); }
 .spine-month { padding-top: var(--s3); }
 .spine-month .m { font-family: var(--serif); font-size: 28px; line-height: 1; font-weight: 400; }
@@ -579,14 +657,14 @@ html[data-theme="dark"] .viewbtn.on { background: var(--line); }
 .spine-title a:hover { text-decoration: underline; }
 .spine-what { text-align: right; font-size: 11.5px; color: var(--dim); }
 
-/* ==== E · papan ======================================================== */
+/* ==== F · papan ======================================================== */
 .board { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: var(--s2); align-items: start; }
 .col { display: flex; flex-direction: column; gap: var(--s2); min-width: 0; }
 .col-head { display: flex; align-items: center; gap: var(--s1); padding: 0 2px var(--s1); }
 .col-head i { width: 8px; height: 8px; border-radius: 2px; flex: none; }
 .col-head b { font-size: 12.5px; font-weight: 600; }
 .col-head em { font-family: var(--mono); font-style: normal; font-size: 11px; color: var(--dim); }
-.bcard { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r2); padding: var(--s3); box-shadow: var(--shadow); transition: box-shadow 0.12s; }
+.bcard { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r2); padding: var(--s3); box-shadow: var(--shadow); }
 .bcard:hover { box-shadow: var(--shadow-lift); }
 .bcard.done { background: var(--sunk); box-shadow: none; }
 .bcard-top { display: flex; align-items: center; justify-content: space-between; gap: var(--s1); }
@@ -630,6 +708,9 @@ html[data-theme="dark"] .viewbtn.on { background: var(--line); }
 
 @media (max-width: 1000px) {
   .charts { grid-template-columns: 1fr; }
+  .momen-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .mgroup { grid-column: span 1; }
+  .mgroup.prep { grid-column: span 2; }
   .gantt { --glabel: 210px; }
   .nrow { grid-template-columns: 74px minmax(0, 1fr); }
   .nrow .nwhat { grid-column: 1 / -1; }
@@ -673,9 +754,20 @@ html[data-theme="dark"] .viewbtn.on { background: var(--line); }
   .icon-btn { width: 30px; height: 30px; font-size: 14px; }
   .date-pill { font-size: 11px; }
 
-  .kpi { padding: var(--s1) var(--s3); display: flex; align-items: baseline; gap: var(--s2); }
-  .kpi .k { order: 2; flex: 1; font-size: 9.5px; }
-  .kpi .n { order: 1; font-size: 22px; margin-top: 0; min-width: 26px; }
+  /* Kelima angka dalam SATU baris, bukan digulir ke samping: menggulir akan
+     menyembunyikan "Tutup ≤ 7 hari" - justru angka yang paling mendesak. Label
+     panjang diganti versi pendek supaya muat di 68px per kolom. Sebelumnya tiga
+     baris setinggi 121px; sekarang satu baris. */
+  .kpis { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .kpi, .kpi:nth-child(2n), .kpi:last-child {
+    grid-column: auto; border-bottom: none; border-right: 1px solid var(--line);
+    padding: var(--s1) 4px; display: flex; flex-direction: column; align-items: center; gap: 1px; text-align: center;
+  }
+  .kpi:last-child { border-right: none; }
+  .kpi .n { order: 1; font-size: 20px; margin-top: 0; }
+  .kpi .k { order: 2; font-size: 8.5px; letter-spacing: 0.06em; white-space: nowrap; }
+  .kpi .k-l { display: none; }
+  .kpi .k-s { display: inline; }
 
   .notices > summary { padding: var(--s2) var(--s3); gap: var(--s2); }
   .nchip { font-size: 11.5px; }
@@ -685,14 +777,30 @@ html[data-theme="dark"] .viewbtn.on { background: var(--line); }
   .searchbar { flex-wrap: wrap; margin: var(--s3) 0 var(--s2); }
   .searchbar input { flex-basis: 100%; min-width: 0; }
   .searchbar select { flex: 1 1 45%; min-width: 0; font-size: 12px; padding: 8px 8px; }
-  /* tiga tab + tiga tombol tampilan tidak muat dalam satu baris 343px, jadi
-     tombol tampilan naik ke barisnya sendiri di kanan dan tab tetap utuh -
-     menyusutkan keduanya membuat sasaran sentuh terlalu kecil */
-  .tabbar { flex-wrap: wrap; gap: 0 var(--s2); margin-bottom: var(--s2); }
-  .tabs { order: 2; flex: 1 1 100%; gap: var(--s3); }
+  /* Tombol tampilan pindah ke bilah bawah - pola aplikasi native, dan ibu jari
+     memang ada di bawah. Sebelumnya ia memakan satu baris sendiri di atas tab:
+     baris jadwal pertama baru mulai di 537px dari layar 812px, dua pertiga
+     layar pertama habis untuk kontrol. */
+  .tabbar { margin-bottom: var(--s2); }
+  .tabs { gap: var(--s3); }
   .tab { font-size: 13px; }
-  .viewbtns { order: 1; margin-bottom: var(--s2); }
-  .viewbtn { width: 38px; height: 32px; }
+  .viewbtns {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 45;
+    margin: 0; border-radius: 0; gap: 0;
+    display: grid; grid-template-columns: repeat(6, minmax(0, 1fr));
+    padding: 4px max(4px, env(safe-area-inset-right)) calc(4px + env(safe-area-inset-bottom)) max(4px, env(safe-area-inset-left));
+    background: var(--panel); border-top: 1px solid var(--line);
+    box-shadow: 0 -6px 20px rgba(0, 0, 0, 0.12);
+  }
+  .viewbtn { width: auto; height: 50px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; border-radius: 8px; }
+  .viewbtn-lbl { display: block; font-size: 10px; font-weight: 500; line-height: 1; }
+  /* Di bilah bawah, yang aktif ditandai warna, bukan pil berlatar - pola yang
+     sudah dikenali dari aplikasi ponsel mana pun. */
+  .viewbtn.on, html[data-theme="dark"] .viewbtn.on { background: none; box-shadow: none; color: var(--accent-ink); }
+  .viewbtn.on .viewbtn-lbl { font-weight: 600; }
+  /* Ruang untuk bilah bawah; tanpa ini catatan kaki tertutup olehnya.
+     `main.wrap`, bukan `main` - lihat catatan di blok display-mode. */
+  main.wrap { padding-bottom: calc(72px + env(safe-area-inset-bottom)); }
   .resultbar { gap: var(--s1) var(--s2); margin-bottom: var(--s2); }
   /* jumlah baris sudah ada di KPI "TOTAL" */
   .rowcount { display: none; }
@@ -702,6 +810,8 @@ html[data-theme="dark"] .viewbtn.on { background: var(--line); }
   /* Gantt tetap berguna di layar sempit karena memang digulir ke samping;
      yang menyusut kolom namanya, bukan jalur waktunya */
   .rcards { grid-template-columns: minmax(0, 1fr); gap: var(--s2); }
+  .momen-grid { grid-template-columns: minmax(0, 1fr); gap: var(--s2); }
+  .mgroup, .mgroup.prep { grid-column: span 1; padding: var(--s2) var(--s3); }
   .rcard { padding: var(--s2) var(--s3); }
 
   .gantt { --glabel: 150px; padding: var(--s2); }

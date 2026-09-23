@@ -79,16 +79,21 @@ export const SHEETS = [
 export type SheetKey = (typeof SHEETS)[number]["key"];
 
 /**
- * Lima tampilan untuk data yang sama: kepadatan, kelengkapan, rentang, waktu,
- * keadaan. Dipilih lewat tombol ikon di ujung kanan baris tab — bukan sebagai
- * tab, karena yang berganti adalah cara menampilkan data yang sama, bukan datanya.
+ * Enam tampilan untuk data yang sama: kepadatan, tindakan, kelengkapan, rentang,
+ * waktu, keadaan. Dipilih lewat tombol ikon di ujung kanan baris tab — bukan
+ * sebagai tab, karena yang berganti adalah cara menampilkan data yang sama,
+ * bukan datanya.
+ *
+ * `short` dipakai bilah navigasi bawah di ponsel, yang hanya punya ~60px per
+ * tombol - "Ruang Kendali" tidak muat di situ.
  */
 export const VIEWS = [
-  { key: "kendali", label: "Ruang Kendali", icon: "list", hint: "Daftar padat — semua baris sekaligus" },
-  { key: "rincian", label: "Rincian", icon: "card", hint: "Kartu — seluruh isi satu program, termasuk catatan" },
-  { key: "gantt", label: "Lini Masa", icon: "gantt", hint: "Gantt — rentang tiap tahap, dikelompokkan per platform" },
-  { key: "agenda", label: "Agenda", icon: "calendar", hint: "Berdasarkan waktu, dikelompokkan per bulan" },
-  { key: "papan", label: "Papan Status", icon: "board", hint: "Kolom per status" },
+  { key: "kendali", label: "Ruang Kendali", short: "Daftar", icon: "list", hint: "Daftar padat — semua baris sekaligus" },
+  { key: "momen", label: "Momen", short: "Momen", icon: "target", hint: "Kesempatan pemasaran minggu ini" },
+  { key: "rincian", label: "Rincian", short: "Kartu", icon: "card", hint: "Kartu — seluruh isi satu program, termasuk catatan" },
+  { key: "gantt", label: "Lini Masa", short: "Gantt", icon: "gantt", hint: "Gantt — rentang tiap tahap, dikelompokkan per platform" },
+  { key: "agenda", label: "Agenda", short: "Agenda", icon: "calendar", hint: "Berdasarkan waktu, dikelompokkan per bulan" },
+  { key: "papan", label: "Papan Status", short: "Papan", icon: "board", hint: "Kolom per status" },
 ] as const;
 
 export type ViewKey = (typeof VIEWS)[number]["key"];

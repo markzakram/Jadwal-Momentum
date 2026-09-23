@@ -12,6 +12,7 @@ import BoardView from "./views/BoardView";
 import CardView from "./views/CardView";
 import DenseView from "./views/DenseView";
 import GanttView from "./views/GanttView";
+import MomenView from "./views/MomenView";
 import { crunchIds, findCrunch } from "@/lib/conflicts";
 import { APP_VERSION, BUILD_SHA } from "@/lib/version";
 import { rowStatuses } from "@/lib/confidence";
@@ -38,10 +39,16 @@ export default function Dashboard({
   payload,
   sheet,
   serverToday,
+  pembanding = {},
+  focusId = null,
 }: {
   payload: SheetPayload;
   sheet: SheetKey;
   serverToday: string;
+  /** baris arsip yang berpasangan, per id baris tahun ini - lihat lib/tahunLalu.ts */
+  pembanding?: Record<number, Entry>;
+  /** dari ?id= - program yang dituju tautan per program */
+  focusId?: number | null;
 }) {
   const [view, setView] = useState<ViewKey>("kendali");
   const [tab, setTab] = useState<TabKey>("Real");
@@ -68,6 +75,25 @@ export default function Dashboard({
     const storedTab = el.dataset.tab as TabKey | undefined;
     if (storedTab && (TABS as readonly string[]).includes(storedTab)) setTab(storedTab);
   }, [serverToday]);
+
+  /*
+   * Tautan ?id= membuka tampilan Rincian di tab Semua dengan penyaring bersih,
+   * supaya programnya PASTI terlihat - tab Real saja bisa menyembunyikannya.
+   * Dideklarasikan SESUDAH pemulih pilihan di atas: efek berjalan berurutan,
+   * dan yang belakangan menang.
+   *
+   * setView/setTab dipanggil langsung, BUKAN pickView/pickTab: membuka tautan
+   * dari rekan tidak boleh mengubah tampilan yang tersimpan milik pembukanya.
+   */
+  const fokusAda = focusId !== null && payload.rows.some((r) => r.id === focusId);
+  useEffect(() => {
+    if (!fokusAda) return;
+    setView("rincian");
+    setTab("Semua");
+    setQ("");
+    setFPlatform("all");
+    setFStatus("all");
+  }, [fokusAda]);
 
   function pickTab(t: TabKey) {
     setTab(t);
@@ -222,6 +248,14 @@ export default function Dashboard({
 
       <main className="wrap">
         {payload.warning && <div className="notice">{payload.warning}</div>}
+        {/* Hari ini beberapa baris duplikat dihapus dan digabung. Tautan lama yang
+            menunjuk ke sana harus menjelaskan dirinya, bukan diam-diam membuka
+            halaman biasa seolah tautannya berhasil. */}
+        {focusId !== null && !fokusAda && (
+          <div className="notice">
+            Program #{focusId} tidak ada di sheet ini — mungkin sudah dihapus atau digabung dengan baris lain.
+          </div>
+        )}
 
         <section className="kpis" style={{ marginTop: payload.warning ? 12 : 0 }}>
           <div className="kpi">
@@ -233,15 +267,15 @@ export default function Dashboard({
             <div className="n">{statusCounts.Buka}</div>
           </div>
           <div className="kpi w">
-            <div className="k">TES BERLANGSUNG</div>
+            <div className="k" title="Tes Berlangsung"><span className="k-l">TES BERLANGSUNG</span><span className="k-s">TES</span></div>
             <div className="n">{statusCounts["Tes Berlangsung"]}</div>
           </div>
           <div className="kpi o">
-            <div className="k">TUTUP ≤ 7 HARI</div>
+            <div className="k" title="Tutup ≤ 7 Hari"><span className="k-l">TUTUP ≤ 7 HARI</span><span className="k-s">TUTUP ≤7H</span></div>
             <div className="n">{closingSoon}</div>
           </div>
           <div className="kpi h">
-            <div className="k">MENUNGGU HASIL</div>
+            <div className="k" title="Menunggu Hasil"><span className="k-l">MENUNGGU HASIL</span><span className="k-s">HASIL</span></div>
             <div className="n">{statusCounts["Menunggu Hasil"]}</div>
           </div>
         </section>
@@ -323,6 +357,10 @@ export default function Dashboard({
                 aria-pressed={view === v.key}
               >
                 <Icon name={v.icon} size={17} label={v.label} />
+                {/* Hanya tampil di bilah bawah ponsel. aria-hidden karena nama
+                    tombolnya sudah dibawa ikon - pembaca layar tidak perlu
+                    mendengar "Ruang Kendali, Daftar". */}
+                <span className="viewbtn-lbl" aria-hidden="true">{v.short}</span>
               </button>
             ))}
           </div>
@@ -345,9 +383,9 @@ export default function Dashboard({
               ))}
             </span>
           )}
-          {/* Agenda dan Lini Masa punya urutan bawaannya sendiri (kronologis),
-              jadi pemilih urutan disembunyikan supaya tidak tampak tak bekerja. */}
-          {view !== "agenda" && view !== "gantt" && (
+          {/* Agenda, Lini Masa, dan Momen punya urutan bawaannya sendiri, jadi
+              pemilih urutan disembunyikan supaya tidak tampak tak bekerja. */}
+          {view !== "agenda" && view !== "gantt" && view !== "momen" && (
             <select value={sort} onChange={(e) => setSort(e.target.value as SortKey)} aria-label="Urutkan">
               <option value="dekat">Urut: Terdekat</option>
               <option value="reg">Urut: Reg Buka</option>
@@ -361,8 +399,10 @@ export default function Dashboard({
           <div className="empty">Tidak ada data yang cocok.</div>
         ) : view === "kendali" ? (
           <DenseView rows={visible} today={today} crunch={crunchSet} showTipe={tab === "Semua"} />
+        ) : view === "momen" ? (
+          <MomenView rows={visible} today={today} showTipe={tab === "Semua"} />
         ) : view === "rincian" ? (
-          <CardView rows={visible} today={today} crunch={crunchSet} showTipe={tab === "Semua"} />
+          <CardView rows={visible} today={today} crunch={crunchSet} showTipe={tab === "Semua"} pembanding={pembanding} focusId={focusId} />
         ) : view === "gantt" ? (
           <GanttView rows={visible} today={today} crunch={crunchSet} showTipe={tab === "Semua"} />
         ) : view === "agenda" ? (

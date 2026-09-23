@@ -113,13 +113,25 @@ export const STATUS_ICON: Record<Status, IconName> = {
   Selesai: "check",
 };
 
-export const ACCENTS: Record<string, [string, string]> = {
-  emerald: ["#10b981", "16,185,129"],
-  rose: ["#f43f5e", "244,63,94"],
-  violet: ["#8b5cf6", "139,92,246"],
-  blue: ["#3b82f6", "59,130,246"],
-  amber: ["#f59e0b", "245,158,11"],
-  cyan: ["#06b6d4", "6,182,212"],
-  fuchsia: ["#d946ef", "217,70,239"],
-  indigo: ["#6366f1", "99,102,241"],
+/**
+ * Warna aksen: [warna, rgb, tinta-terang, tinta-gelap].
+ *
+ * Warna aslinya dipakai untuk rona latar tipis (lewat rgb). TEKS memakai
+ * tinta - karena diukur, KEDELAPAN warna asli gagal di latar putih (2.15 untuk
+ * amber sampai 4.47 untuk indigo, di bawah ambang 4.5), dan violet serta indigo
+ * juga gagal di panel gelap (4.28 dan 4.06). Tiap tinta dihitung dengan menggeser
+ * kecerahannya sampai lolos 4.6 terhadap latar TERCERAH dan TERGELAP temanya.
+ *
+ * Tabel ini satu-satunya. Skrip pemulih di layout.tsx menurunkannya dari sini,
+ * bukan menyalinnya - salinan teks dulu tertinggal saat daftar tampilan berubah.
+ */
+export const ACCENTS: Record<string, [string, string, string, string]> = {
+  emerald: ["#10b981", "16,185,129", "#0b7e58", "#10b981"],
+  rose:    ["#f43f5e", "244,63,94",  "#da0c30", "#f43f5e"],
+  violet:  ["#8b5cf6", "139,92,246", "#7c46f5", "#956af7"],
+  blue:    ["#3b82f6", "59,130,246", "#0b63f3", "#3b82f6"],
+  amber:   ["#f59e0b", "245,158,11", "#996206", "#f59e0b"],
+  cyan:    ["#06b6d4", "6,182,212",  "#04788c", "#06b6d4"],
+  fuchsia: ["#d946ef", "217,70,239", "#ba12d4", "#d946ef"],
+  indigo:  ["#6366f1", "99,102,241", "#5558f0", "#7376f2"],
 };

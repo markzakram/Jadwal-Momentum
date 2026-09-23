@@ -46,6 +46,8 @@ export default function ThemeControls() {
     const el = document.documentElement;
     el.style.setProperty("--accent", a[0]);
     el.style.setProperty("--accent-rgb", a[1]);
+    el.style.setProperty("--accent-ink-l", a[2]);
+    el.style.setProperty("--accent-ink-d", a[3]);
     el.dataset.accent = name;
     setAccent(name);
     try {

@@ -41,7 +41,13 @@ export type IconName =
   | "doc"
   | "bookOpen"
   | "star"
-  | "flag";
+  | "flag"
+  // momen pemasaran
+  | "target"
+  | "stairs"
+  | "hourglass"
+  | "megaphone"
+  | "link";
 
 const SHAPES: Record<IconName, ReactElement> = {
   // mode tampilan
@@ -214,6 +220,37 @@ const SHAPES: Record<IconName, ReactElement> = {
     <>
       <path d="M5.4 21V3.6" />
       <path d="M5.4 4.6h11.4l-1.8 3.6 1.8 3.6H5.4" />
+    </>
+  ),
+
+  // Momen pemasaran. "segera dibuka" sengaja memakai calendarPlus yang sudah
+  // ada - itu ikon status "Akan Datang", dan maknanya memang sama.
+  target: (
+    <>
+      <circle cx="12" cy="12" r="8.5" />
+      <circle cx="12" cy="12" r="4.6" />
+      <circle cx="12" cy="12" r="1.1" fill="currentColor" stroke="none" />
+    </>
+  ),
+  stairs: <path d="M4 19.5h4.2v-4.3h4.1v-4.3h4.1V6.6h3.6" />,
+  hourglass: (
+    <>
+      <path d="M6.5 3.5h11M6.5 20.5h11" />
+      <path d="M7.6 3.5v2.3a4.4 4.4 0 0 0 1.9 3.6L12 11l2.5-1.6a4.4 4.4 0 0 0 1.9-3.6V3.5" />
+      <path d="M7.6 20.5v-2.3a4.4 4.4 0 0 1 1.9-3.6L12 13l2.5 1.6a4.4 4.4 0 0 1 1.9 3.6v2.3" />
+    </>
+  ),
+  megaphone: (
+    <>
+      <path d="M4 9.6v4.8h3.2l6.3 4.1V5.5L7.2 9.6z" />
+      <path d="M16.6 9.2a3.9 3.9 0 0 1 0 5.6M19 6.8a7.4 7.4 0 0 1 0 10.4" />
+    </>
+  ),
+  // tautan per program (langkah 6)
+  link: (
+    <>
+      <path d="M10 13.6a4.3 4.3 0 0 0 6.1.4l2.7-2.7a4.3 4.3 0 0 0-6.1-6.1l-1.4 1.4" />
+      <path d="M14 10.4a4.3 4.3 0 0 0-6.1-.4l-2.7 2.7a4.3 4.3 0 0 0 6.1 6.1l1.4-1.4" />
     </>
   ),
 };

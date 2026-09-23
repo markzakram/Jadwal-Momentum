@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, type CSSProperties, type ReactNode } from "react";
+import { useEffect, useState, type CSSProperties, type ReactNode } from "react";
 import DateText from "../DateText";
 import Icon from "../Icon";
 import PlatformMark from "../PlatformMark";
 import TipeTag from "../TipeTag";
 import { STATUS_BADGE, STATUS_ICON, countdownTone, platformColor } from "@/lib/palette";
-import { countdown, statusOf } from "@/lib/status";
+import { dateStatusOf } from "@/lib/confidence";
+import { MONTHS, countdown, pd, statusOf } from "@/lib/status";
 import type { Entry } from "@/lib/types";
 
 /**
@@ -22,15 +23,37 @@ import type { Entry } from "@/lib/types";
 
 const NOTE_CLAMP = 190;
 
-function Field({ label, tone, children }: { label: string; tone?: string; children: ReactNode }) {
+function Field({
+  label,
+  tone,
+  arsip,
+  children,
+}: {
+  label: string;
+  tone?: string;
+  /** tanggal yang sama dari arsip tahun lalu, sudah diformat */
+  arsip?: string;
+  children: ReactNode;
+}) {
   return (
     <div className="rc-f">
       <div className="rc-k" style={tone ? { color: tone } : undefined}>
         {label}
       </div>
       <div className="rc-v">{children}</div>
+      {arsip && <div className="rc-arsip">{arsip}</div>}
     </div>
   );
+}
+
+/** "2025: 21 Nov" atau "2025: 21 – 27 Nov" - tahunnya selalu tertulis. */
+function tglArsip(a: string, b?: string): string | undefined {
+  const da = pd(a);
+  if (!da) return undefined;
+  const db = b ? pd(b) : null;
+  const f = (d: Date) => `${d.getDate()} ${MONTHS[d.getMonth()]}`;
+  if (!db || db.getTime() === da.getTime()) return `${da.getFullYear()}: ${f(da)}`;
+  return `${da.getFullYear()}: ${f(da)} – ${f(db)}`;
 }
 
 /** Satu rentang tanggal. Ujung yang kosong tidak dikarang - ia jadi tanggal tunggal. */
@@ -54,14 +77,47 @@ export default function CardView({
   today,
   crunch,
   showTipe = false,
+  pembanding = {},
+  focusId = null,
 }: {
   rows: Entry[];
   today: Date;
   /** baris yang tesnya jatuh di periode menumpuk */
   crunch?: Set<number>;
   showTipe?: boolean;
+  pembanding?: Record<number, Entry>;
+  focusId?: number | null;
 }) {
   const [open, setOpen] = useState<ReadonlySet<number>>(() => new Set());
+  const [disalin, setDisalin] = useState<number | null>(null);
+
+  // Tautan ?id= berakhir di sini. `block: "center"`, bukan "start": kepala
+  // halaman menempel di atas dan akan menutupi kartu yang baru saja dituju.
+  useEffect(() => {
+    if (!focusId) return;
+    document.getElementById(`p-${focusId}`)?.scrollIntoView({ block: "center" });
+  }, [focusId]);
+
+  /**
+   * Hanya ?sheet= yang dipertahankan dari alamat sekarang. Kata kunci pencarian
+   * atau tab yang sedang aktif tidak ikut - penerima tautan harus melihat
+   * program itu, bukan tampilan pribadi pengirimnya.
+   */
+  async function salinTautan(id: number) {
+    const u = new URL(window.location.href);
+    const sheet = u.searchParams.get("sheet");
+    u.search = "";
+    u.hash = "";
+    if (sheet) u.searchParams.set("sheet", sheet);
+    u.searchParams.set("id", String(id));
+    try {
+      await navigator.clipboard.writeText(u.toString());
+      setDisalin(id);
+      setTimeout(() => setDisalin((v) => (v === id ? null : v)), 2000);
+    } catch {
+      window.prompt("Salin tautan program ini:", u.toString());
+    }
+  }
 
   function toggleNote(id: number) {
     setOpen((prev) => {
@@ -85,9 +141,31 @@ export default function CardView({
         const longNote = it.catatan.length > NOTE_CLAMP;
         const noteOpen = open.has(it.id);
 
+        /*
+         * Arsip hanya ditampilkan di samping tanggal yang BELUM resmi. Tanggal
+         * resmi tidak butuh pembanding; tanggal tebakan justru butuh - dan
+         * pembanding itulah yang dulu dikutip manual di kartu SEL.
+         */
+        const lalu = pembanding[it.id];
+        const bukti = (a: keyof Entry, b?: keyof Entry, tahap?: "tahap1" | "tahap2"): string | undefined => {
+          if (!lalu || dateStatusOf(it, String(a)) === "resmi") return undefined;
+          const t = tglArsip(String(lalu[a] ?? ""), b ? String(lalu[b] ?? "") : undefined);
+          if (!t || !tahap) return t;
+          // Tahap dibandingkan menurut POSISI (tahap 1 dengan tahap 1), dan posisi
+          // tidak menjamin tahapnya sama: tahap 1 PCAM 10 adalah "PU & TKD", tahap 1
+          // PCAM 9 adalah "Seleksi Administrasi". Tanpa nama tahap arsipnya, "2025:
+          // 28 Nov" terbaca seolah tes PU & TKD tahun lalu jatuh tanggal itu.
+          const namaLalu = String(lalu[tahap] ?? "").trim();
+          const namaKini = String(it[tahap] ?? "").trim();
+          return namaLalu && namaLalu.toLowerCase() !== namaKini.toLowerCase() ? `${t} · ${namaLalu}` : t;
+        };
+        const buktiApapun = !!lalu && (["regBuka", "regTutup", "t1Mulai", "t2Mulai", "pengT1", "pengT2", "pengAkhir"] as const)
+          .some((f) => bukti(f));
+
         return (
           <article
-            className="rcard"
+            className={`rcard${focusId === it.id ? " fokus" : ""}`}
+            id={`p-${it.id}`}
             key={it.id}
             style={{ "--acc": platformColor(it.platform) } as CSSProperties}
           >
@@ -128,38 +206,46 @@ export default function CardView({
             </div>
 
             <div className="rc-meta">
-              <Field label="Reg Buka">
+              <Field label="Reg Buka" arsip={bukti("regBuka")}>
                 <DateText it={it} field="regBuka" />
               </Field>
-              <Field label="Reg Tutup">
+              <Field label="Reg Tutup" arsip={bukti("regTutup")}>
                 <DateText it={it} field="regTutup" />
               </Field>
 
               {t1 && (
-                <Field label={it.tahap1 || "Tahap 1"}>
+                <Field label={it.tahap1 || "Tahap 1"} arsip={bukti("t1Mulai", "t1Akhir", "tahap1")}>
                   <Range it={it} a="t1Mulai" b="t1Akhir" />
                 </Field>
               )}
               {t2 && (
-                <Field label={it.tahap2 || "Tahap 2"}>
+                <Field label={it.tahap2 || "Tahap 2"} arsip={bukti("t2Mulai", "t2Akhir", "tahap2")}>
                   <Range it={it} a="t2Mulai" b="t2Akhir" />
                 </Field>
               )}
 
               {it.pengT1 && (
-                <Field label="Peng. Tahap 1">
+                <Field label="Peng. Tahap 1" arsip={bukti("pengT1")}>
                   <DateText it={it} field="pengT1" />
                 </Field>
               )}
               {it.pengT2 && (
-                <Field label="Peng. Tahap 2">
+                <Field label="Peng. Tahap 2" arsip={bukti("pengT2")}>
                   <DateText it={it} field="pengT2" />
                 </Field>
               )}
               {it.pengAkhir && (
-                <Field label="Peng. Akhir" tone="var(--hasil)">
+                <Field label="Peng. Akhir" tone="var(--hasil)" arsip={bukti("pengAkhir")}>
                   <DateText it={it} field="pengAkhir" />
                 </Field>
+              )}
+
+              {/* Nama program arsipnya selalu ditulis - pasangan yang janggal harus
+                  kelihatan janggal, bukan tersembunyi di balik angka tanggal. */}
+              {buktiApapun && (
+                <div className="rc-pembanding">
+                  Pembanding: <b>{lalu!.program}</b>
+                </div>
               )}
             </div>
 
@@ -174,8 +260,9 @@ export default function CardView({
               </div>
             )}
 
-            {(it.linkWeb || it.linkEbook) && (
-              <div className="rc-links">
+            {/* Selalu dirender - tombol salin tautan ada di setiap kartu, termasuk
+                yang tidak punya situs resmi maupun ebook. */}
+            <div className="rc-links">
                 {it.linkWeb && (
                   <a href={it.linkWeb} target="_blank" rel="noopener noreferrer">
                     <Icon name="globe" size={13} />
@@ -188,8 +275,11 @@ export default function CardView({
                     Ebook
                   </a>
                 )}
-              </div>
-            )}
+                <button type="button" className="rc-salin" onClick={() => salinTautan(it.id)} title="Salin tautan ke program ini">
+                  <Icon name="link" size={13} />
+                  {disalin === it.id ? "Tersalin" : "Salin tautan"}
+                </button>
+            </div>
           </article>
         );
       })}
