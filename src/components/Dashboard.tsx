@@ -1,9 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import Icon from "./Icon";
 import Notices from "./Notices";
+import PasangAplikasi from "./PasangAplikasi";
+import StatusSalinan from "./StatusSalinan";
 import PlatformBar from "./PlatformBar";
 import StatusDonut from "./StatusDonut";
 import ThemeControls from "./ThemeControls";
@@ -35,12 +38,26 @@ import {
 
 type SortKey = "dekat" | "reg" | "tes" | "platform";
 
+/** Tanggal hari ini menurut jam perangkat, 'YYYY-MM-DD'. */
+function tanggalLokal(): string {
+  const n = new Date();
+  return `${n.getFullYear()}-${String(n.getMonth() + 1).padStart(2, "0")}-${String(n.getDate()).padStart(2, "0")}`;
+}
+
+/**
+ * Aplikasi yang dibuka dari layar utama bisa hidup di latar belakang berhari-
+ * hari. Dibuka lagi setelah selama ini tersembunyi, ia menarik data baru sendiri
+ * - tanpa itu, jadwal kemarin tampil pagi ini seolah terbaru.
+ */
+const SEGARKAN_SETELAH_MENIT = 30;
+
 export default function Dashboard({
   payload,
   sheet,
   serverToday,
   pembanding = {},
   focusId = null,
+  initialView = null,
 }: {
   payload: SheetPayload;
   sheet: SheetKey;
@@ -49,6 +66,8 @@ export default function Dashboard({
   pembanding?: Record<number, Entry>;
   /** dari ?id= - program yang dituju tautan per program */
   focusId?: number | null;
+  /** dari ?view= - dipakai pintasan aplikasi */
+  initialView?: ViewKey | null;
 }) {
   const [view, setView] = useState<ViewKey>("kendali");
   const [tab, setTab] = useState<TabKey>("Real");
@@ -63,8 +82,7 @@ export default function Dashboard({
   // Render pertama memakai nilai yang sama dengan server; preferensi tersimpan
   // baru dibaca setelah mount, jadi markupnya tidak pernah berbeda.
   useEffect(() => {
-    const now = new Date();
-    const local = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+    const local = tanggalLokal();
     if (local !== serverToday) setTodayIso(local);
     // Keduanya dibaca dari atribut <html>, bukan langsung dari localStorage:
     // skrip di layout sudah memasangnya sebelum paint pertama, jadi tidak ada
@@ -75,6 +93,14 @@ export default function Dashboard({
     const storedTab = el.dataset.tab as TabKey | undefined;
     if (storedTab && (TABS as readonly string[]).includes(storedTab)) setTab(storedTab);
   }, [serverToday]);
+
+  // ?view= dari pintasan aplikasi. Seperti ?id= di bawah, tidak disimpan -
+  // membuka pintasan Momen tidak boleh mengubah tampilan yang dipilih orang
+  // sendiri. Letaknya di antara keduanya: menang atas pemulih, kalah dari ?id=
+  // (tautan ke satu program selalu butuh Rincian).
+  useEffect(() => {
+    if (initialView) setView(initialView);
+  }, [initialView]);
 
   /*
    * Tautan ?id= membuka tampilan Rincian di tab Semua dengan penyaring bersih,
@@ -94,6 +120,27 @@ export default function Dashboard({
     setFPlatform("all");
     setFStatus("all");
   }, [fokusAda]);
+
+  const router = useRouter();
+  useEffect(() => {
+    let tersembunyiSejak = 0;
+    const saatBerubah = () => {
+      if (document.hidden) {
+        tersembunyiSejak = Date.now();
+        return;
+      }
+      // Tanggal bisa sudah berganti semalaman - murah, tanpa jaringan.
+      setTodayIso(tanggalLokal());
+      // Data baru hanya bila memang lama tersembunyi dan ada koneksi; tanpa
+      // koneksi, StatusSalinan yang memberi tahu bahwa datanya lama.
+      if (tersembunyiSejak && Date.now() - tersembunyiSejak > SEGARKAN_SETELAH_MENIT * 60_000 && navigator.onLine) {
+        router.refresh();
+      }
+      tersembunyiSejak = 0;
+    };
+    document.addEventListener("visibilitychange", saatBerubah);
+    return () => document.removeEventListener("visibilitychange", saatBerubah);
+  }, [router]);
 
   function pickTab(t: TabKey) {
     setTab(t);
@@ -240,10 +287,15 @@ export default function Dashboard({
                 </Link>
               ))}
             </div>
+            <PasangAplikasi />
             <ThemeControls />
             <span className="date-pill">{fmt(todayIso)}</span>
           </div>
         </div>
+        {/* Di DALAM kepala halaman, bukan di bawahnya: ikut menempel saat
+            digulir tanpa perlu tahu tinggi kepala halaman, yang berbeda antara
+            desktop (satu baris) dan ponsel (dua baris). */}
+        <StatusSalinan fetchedAt={payload.fetchedAt} />
       </header>
 
       <main className="wrap">
@@ -305,14 +357,17 @@ export default function Dashboard({
         </details>
 
         <div className="searchbar">
-          <Icon name="search" size={16} />
-          <input
-            type="search"
-            placeholder="Cari platform, program, atau catatan..."
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-            aria-label="Cari"
-          />
+          {/* <label>: ikonnya ikut bisa diketuk untuk mulai mengetik */}
+          <label className="search-field">
+            <Icon name="search" size={16} />
+            <input
+              type="search"
+              placeholder="Cari platform, program, atau catatan..."
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              aria-label="Cari"
+            />
+          </label>
           <select value={fPlatform} onChange={(e) => setFPlatform(e.target.value)} aria-label="Saring platform">
             <option value="all">Semua Platform</option>
             {platforms.map((p) => (

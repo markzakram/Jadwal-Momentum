@@ -18,6 +18,78 @@ Nomor versi bisa lupa dinaikkan; commit tidak bisa.
 
 ---
 
+## 1.2.0
+
+Dashboard kini bisa dipasang sebagai aplikasi, dan tetap terbuka tanpa koneksi.
+
+### Tombol Pasang
+
+- Tombol **Pasang** di kepala halaman memunculkan dialog pemasangan bawaan
+  Chrome / Edge / Android. Ia hanya muncul kalau browser memang menawarkan
+  pemasangan, dan hilang begitu aplikasinya terpasang atau dibuka dari layar
+  utama.
+- iPhone dan iPad tidak punya dialog itu — di sana tombolnya membuka petunjuk
+  "Bagikan → Tambah ke Layar Utama". iPadOS yang mengaku sebagai Mac ikut
+  dikenali.
+
+### Tetap terbuka tanpa koneksi
+
+Versi 1.0 sengaja tidak menyimpan halaman, karena tanggal kedaluwarsa lebih
+berbahaya daripada halaman kosong. Keputusan itu dibalik dengan tiga pengaman:
+
+1. Selama ada jaringan, halaman **selalu** diambil baru. Salinan hanya dipakai
+   kalau permintaannya benar-benar gagal.
+2. Halaman dari salinan membawa **pita peringatan** dengan waktu persis datanya
+   diambil: "Tanpa koneksi. Menampilkan data per 28 Sep, 11.37 (3 jam lalu)."
+3. Status dan hitung mundur tetap dihitung terhadap **hari ini** di perangkat.
+   Yang bisa usang hanya tanggal yang diubah di sheet sesudah salinan dibuat —
+   dan pita itulah yang memperingatkannya.
+
+Pitanya dipicu umur data (lebih dari 10 menit saat halaman dibuka), bukan sinyal
+"online" browser saja: Wi-Fi dengan portal login berkata online padahal server
+tak terjangkau. Satu salinan per sheet; tautan `?id=` dan `?view=` tetap terbuka
+dari salinan itu.
+
+### Segar sendiri
+
+Aplikasi yang dibuka lagi setelah lebih dari 30 menit di latar belakang
+mengambil data baru sendiri, tanpa ditarik atau dimuat ulang. Tanggal "hari ini"
+ikut diperbarui setiap kali aplikasi kembali ke depan — yang dibiarkan terbuka
+semalaman tidak lagi menghitung mundur dari kemarin. Tanpa koneksi, tidak ada
+permintaan sama sekali.
+
+### Pintasan aplikasi
+
+Tekan lama ikon di layar utama: **Momen**, **Lini Masa**, dan **Rincian**
+langsung terbuka. Alamatnya `/?view=momen`, `gantt`, atau `rincian` — bisa juga
+dipakai sebagai tautan biasa. Seperti `?id=`, membuka tampilan lewat alamat
+tidak mengubah tampilan tersimpan milik pembukanya.
+
+### Perbaikan (ditemukan saat QC)
+
+- **Salinan luring membawa tampilan dari alamat terakhir.** Salinan yang
+  ditulis dari `/?view=momen` membuka Momen bagi siapa pun yang membuka
+  aplikasi tanpa koneksi sesudahnya. Salinan kini hanya ditulis dari alamat
+  netral (tanpa `?id=` / `?view=`), dan nama cache naik ke v2 supaya salinan
+  lama yang terlanjur tercemar ikut dibuang.
+- **Kepala halaman di ponsel menempel ke tepi layar** — logo di tepi kiri,
+  tanggal terpotong di kanan. Aturan ponselnya memakai `padding: … 0`, jebakan
+  yang sudah diperbaiki di aturan desktop tapi lolos di sini.
+- **Jarak atas halaman tidak pernah berlaku,** jadi kotak KPI menempel ke garis
+  bawah kepala halaman. Kalah spesifisitas dari `.wrap`, sama seperti ruang
+  bawah yang diperbaiki di 1.1.0.
+- **Ikon kaca pembesar jatuh di bawah kotak cari** di ponsel. Ia ditengahkan
+  terhadap seluruh baris yang terlipat dua, bukan terhadap kotaknya sendiri.
+- Pemilih sheet dirapatkan di ponsel supaya pemilih + Pasang + tema + tanggal
+  muat satu baris di layar 360 px. Di 320 px tanggal turun ke baris sendiri.
+
+### Catatan
+
+- Service worker hanya aktif di produksi, jadi semua fitur di atas baru terasa
+  setelah deploy ke Vercel.
+- Petunjuk iOS diuji lewat logika pengenalan perangkatnya (enam jenis), belum di
+  iPhone sungguhan.
+
 ## 1.1.0
 
 Dashboard kini menjawab dua pertanyaan, bukan satu: selain "jadwalnya kapan",

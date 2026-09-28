@@ -47,7 +47,11 @@ export type IconName =
   | "stairs"
   | "hourglass"
   | "megaphone"
-  | "link";
+  | "link"
+  // PWA
+  | "install"
+  | "share"
+  | "wifiOff";
 
 const SHAPES: Record<IconName, ReactElement> = {
   // mode tampilan
@@ -246,6 +250,24 @@ const SHAPES: Record<IconName, ReactElement> = {
       <path d="M16.6 9.2a3.9 3.9 0 0 1 0 5.6M19 6.8a7.4 7.4 0 0 1 0 10.4" />
     </>
   ),
+  // PWA. "share" meniru bentuk tombol Bagikan milik Safari - petunjuk
+  // pemasangan di iPhone menyuruh orang mencari ikon itu, jadi bentuknya
+  // harus bisa langsung dikenali.
+  install: <path d="M12 3.5v11.2M7.6 10.4 12 14.8l4.4-4.4M4.5 16.8v1.7a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-1.7" />,
+  share: (
+    <>
+      <path d="M12 3.6v11M8.2 7.4 12 3.6l3.8 3.8" />
+      <path d="M8.5 10.4H7a2 2 0 0 0-2 2v6.2a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6.2a2 2 0 0 0-2-2h-1.5" />
+    </>
+  ),
+  wifiOff: (
+    <>
+      <path d="M3.5 3.5l17 17" />
+      <path d="M8.6 15.6a4.8 4.8 0 0 1 6.8 0M5.2 12.2a9.6 9.6 0 0 1 3.4-2.2M18.8 12.2a9.6 9.6 0 0 0-5.2-2.6M2 8.8a14.4 14.4 0 0 1 3.9-2.6M22 8.8a14.4 14.4 0 0 0-10-4.1c-.9 0-1.7.1-2.5.2" />
+      <circle cx="12" cy="19" r="0.9" fill="currentColor" stroke="none" />
+    </>
+  ),
+
   // tautan per program (langkah 6)
   link: (
     <>

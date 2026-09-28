@@ -98,5 +98,61 @@ def main() -> None:
         print("icon-32.png lama dihapus - digantikan favicon-32.png")
 
 
+
+
+# --- Pintasan aplikasi -------------------------------------------------------
+# Muncul saat ikon di layar utama ditekan lama. Bentuknya sama dengan tombol
+# tampilan di dalam aplikasi, supaya orang mengenali tujuannya sebelum membaca
+# labelnya. Latar merah tua merek, bukan putih: di menu pintasan Android ketiganya
+# berjajar di bawah ikon utama yang sudah putih, dan tiga kotak putih lagi
+# membuatnya sulit dibedakan dari ikon aplikasinya sendiri.
+
+MERAH = (143, 1, 30)
+
+
+def _kanvas_pintasan(sisi: int):
+    s = sisi * SKALA
+    img = Image.new("RGBA", (s, s), (0, 0, 0, 0))
+    d = ImageDraw.Draw(img)
+    d.rounded_rectangle([0, 0, s - 1, s - 1], radius=int(s * 0.22), fill=MERAH)
+    return img, d, s
+
+
+def pintasan_momen(sisi: int = 96) -> Image.Image:
+    img, d, s = _kanvas_pintasan(sisi)
+    c, tebal = s / 2, int(s * 0.06)
+    for r in (0.30, 0.17):
+        R = s * r
+        d.ellipse([c - R, c - R, c + R, c + R], outline=PUTIH, width=tebal)
+    R = s * 0.05
+    d.ellipse([c - R, c - R, c + R, c + R], fill=PUTIH)
+    return img.resize((sisi, sisi), Image.LANCZOS)
+
+
+def pintasan_gantt(sisi: int = 96) -> Image.Image:
+    img, d, s = _kanvas_pintasan(sisi)
+    t = s * 0.1
+    for x0, y, x1 in ((0.20, 0.33, 0.56), (0.36, 0.50, 0.80), (0.28, 0.67, 0.62)):
+        d.rounded_rectangle([s * x0, s * y - t / 2, s * x1, s * y + t / 2], radius=t / 2, fill=PUTIH)
+    return img.resize((sisi, sisi), Image.LANCZOS)
+
+
+def pintasan_kartu(sisi: int = 96) -> Image.Image:
+    img, d, s = _kanvas_pintasan(sisi)
+    tebal = int(s * 0.06)
+    d.rounded_rectangle([s * 0.22, s * 0.25, s * 0.78, s * 0.75], radius=int(s * 0.08), outline=PUTIH, width=tebal)
+    t = s * 0.06
+    for y, x1 in ((0.40, 0.56), (0.50, 0.68), (0.60, 0.52)):
+        d.rounded_rectangle([s * 0.33, s * y - t / 2, s * x1, s * y + t / 2], radius=t / 2, fill=PUTIH)
+    return img.resize((sisi, sisi), Image.LANCZOS)
+
+
+def buat_pintasan() -> None:
+    for nama, fn in (("pintasan-momen.png", pintasan_momen), ("pintasan-gantt.png", pintasan_gantt), ("pintasan-kartu.png", pintasan_kartu)):
+        fn().save(KELUAR / nama, "PNG", optimize=True)
+        print(f"  {nama:26}   96px  pintasan    {(KELUAR / nama).stat().st_size:>6} bita")
+
+
 if __name__ == "__main__":
     main()
+    buat_pintasan()

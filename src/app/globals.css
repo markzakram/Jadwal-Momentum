@@ -152,6 +152,13 @@ button, a, summary, .tab, .viewbtn, .sw, .seg a, .seg button { -webkit-tap-highl
   .rc-links a:active, .btn-mini:active { opacity: 0.6; }
 }
 
+/* `main.wrap`, bukan `main`: dulu `main { padding: var(--s4) 0 var(--s5) }`
+   dan tidak pernah berlaku - `.wrap` (kelas) mengalahkan `main` (elemen), jadi
+   kotak KPI menempel ke garis bawah kepala halaman. Harus berdiri SEBELUM blok
+   display-mode di bawah, yang menimpa padding-bottom-nya dengan spesifisitas
+   yang sama. */
+main.wrap { padding-top: var(--s4); padding-bottom: var(--s5); }
+
 @media (display-mode: standalone) {
   /* Tarik-untuk-muat-ulang dan pantulan karet di ujung daftar hanya masuk akal
      di dalam browser. Di layar utama, keduanya terasa seperti cacat. */
@@ -166,7 +173,6 @@ button, a, summary, .tab, .viewbtn, .sw, .seg a, .seg button { -webkit-tap-highl
 .wrap { max-width: 1360px; margin: 0 auto; padding: 0 var(--s4); }
 .mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
 .only-sr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
-main { padding: var(--s4) 0 var(--s5); }
 a.plain { color: var(--accent-ink); text-decoration: none; }
 a.plain:hover { text-decoration: underline; }
 
@@ -221,6 +227,29 @@ html[data-theme="dark"] .seg a.on, html[data-theme="dark"] .seg button.on { back
   display: grid; place-items: center;
 }
 .icon-btn:hover { background: var(--sunk); }
+
+/* Tombol pasang: ikon + label di layar lebar, ikon saja di ponsel. */
+.icon-btn.pasang { display: inline-flex; align-items: center; gap: 6px; width: auto; padding: 0 12px; font-family: inherit; font-size: 12px; font-weight: 500; }
+.pasang-ios { position: relative; }
+.pasang-petunjuk {
+  position: absolute; top: calc(100% + 8px); right: 0; z-index: 50; width: 280px;
+  padding: var(--s3); background: var(--panel); border: 1px solid var(--line); border-radius: var(--r2);
+  box-shadow: var(--shadow-lift); font-size: 12.5px; line-height: 1.5; color: var(--text);
+}
+.pasang-petunjuk ol { margin: var(--s1) 0; padding-left: 18px; }
+.pasang-petunjuk li { margin: 5px 0; }
+.pasang-petunjuk p { margin: var(--s1) 0 0; font-size: 11.5px; color: var(--muted); }
+.pasang-ikon { display: inline-flex; vertical-align: -2px; color: var(--info); }
+
+/* ==== pita salinan (lihat StatusSalinan.tsx) =========================
+   Lebih menonjol dari pemberitahuan biasa karena menyangkut apakah jadwal di
+   bawahnya bisa dipercaya. Ia bagian dari kepala halaman yang menempel, jadi
+   orang yang menggulir jauh ke bawah tetap tahu bahwa yang dilihatnya salinan. */
+.salinan { background: rgba(var(--warn-rgb), 0.14); border-top: 1px solid rgba(var(--warn-rgb), 0.4); }
+.salinan-isi { display: flex; align-items: center; gap: var(--s2); padding-top: var(--s1); padding-bottom: var(--s1); font-size: 12.5px; line-height: 1.45; color: var(--text); }
+.salinan-ikon { display: inline-flex; flex: none; color: var(--warn); }
+.salinan-teks { flex: 1; min-width: 0; }
+.salinan .btn-mini { flex: none; }
 
 /* ==== KPI ============================================================== */
 .kpis { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); background: var(--panel); border: 1px solid var(--line); border-radius: var(--r2); overflow: hidden; }
@@ -321,14 +350,19 @@ table.tblview td.n { text-align: right; font-family: var(--mono); font-variant-n
 .ico { display: inline-block; vertical-align: -0.16em; flex: none; }
 
 /* ==== pencarian & penyaring ============================================ */
-.searchbar { position: relative; display: flex; align-items: center; gap: var(--s2); margin: var(--s4) 0 var(--s3); }
-.searchbar > .ico { position: absolute; left: 13px; color: var(--dim); }
+.searchbar { display: flex; align-items: center; gap: var(--s2); margin: var(--s4) 0 var(--s3); }
+/* Ikon ditempelkan ke kotak isiannya sendiri, bukan ke seluruh baris. Di ponsel
+   baris ini terlipat dua - kotak cari di atas, dua penyaring di bawah - dan
+   ikon yang ditengahkan terhadap SELURUH baris jatuh ke celah di antara
+   keduanya, di luar kotak. */
+.search-field { position: relative; flex: 1; min-width: 200px; display: flex; align-items: center; }
+.search-field > .ico { position: absolute; left: 13px; color: var(--dim); pointer-events: none; }
 .searchbar input, .searchbar select, .resultbar select {
   font-family: inherit; font-size: 13px; padding: 9px 12px;
   border: 1px solid var(--line); border-radius: var(--r1);
   background: var(--panel); color: var(--text); outline: none;
 }
-.searchbar input { flex: 1; min-width: 200px; padding-left: 38px; }
+.search-field input { flex: 1; min-width: 0; padding-left: 38px; }
 .searchbar input::placeholder { color: var(--dim); }
 .searchbar input:focus, .searchbar select:focus, .resultbar select:focus {
   border-color: var(--accent-ink); box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.16);
@@ -735,12 +769,17 @@ html[data-theme="dark"] .viewbtn.on { background: var(--line); }
    ruang yang ada 331px. Barisnya menumpuk, bukan dipaksakan tetap grid. */
 @media (max-width: 760px) {
   .wrap { padding: 0 var(--s3); }
-  main { padding: var(--s3) 0 var(--s4); }
+  /* bawahnya diatur aturan bilah bawah di akhir blok ini */
+  main.wrap { padding-top: var(--s3); }
   .board { grid-template-columns: minmax(0, 1fr); }
 
   /* Tiga baris kendali itu wajar di layar sempit, tapi tiap barisnya harus
      serapat mungkin — kepala halaman ini sticky, jadi tingginya dibayar terus. */
-  .head-row { gap: var(--s1); padding: var(--s1) 0; min-height: 0; }
+  /* padding-top/bottom, BUKAN `padding: var(--s1) 0` - jebakan yang sama dengan
+     catatan di aturan .head-row utama. Versi ringkas di sini lolos dari
+     perbaikan itu, dan di ponsel logo menempel ke tepi kiri layar sementara
+     tanggal di kanan terpotong. */
+  .head-row { gap: var(--s1); padding-top: var(--s1); padding-bottom: var(--s1); min-height: 0; }
   /* Dulu di sini ada `.brand span { display: none }` untuk menyembunyikan
      "TIM MARKETING". Markupnya sudah berganti - divisi kini sebuah <p>, dan
      satu-satunya <span> yang tersisa adalah lencana versi. Aturan itu
@@ -749,9 +788,20 @@ html[data-theme="dark"] .viewbtn.on { background: var(--line); }
   .head-row > .seg { width: 100%; }
   .head-row > .seg button { flex: 1; text-align: center; padding: 6px 4px; font-size: 12px; }
   .head-ctrl { width: 100%; margin-left: 0; justify-content: space-between; gap: var(--s1); }
+  /* Pemilih sheet + tombol Pasang + tema + tanggal harus muat SATU baris di
+     ponsel 360px (Android pada umumnya - justru tempat tombol Pasang muncul).
+     Dengan padding 14px barisnya butuh 339px dari 328px yang ada, dan tanggal
+     terlempar ke baris ketiga kepala halaman yang sticky. */
+  .head-ctrl .seg a { padding: 6px 10px; }
   /* pilihan warna aksen bukan kebutuhan di ponsel dan menghabiskan satu baris */
   .swatches { display: none; }
   .icon-btn { width: 30px; height: 30px; font-size: 14px; }
+  .icon-btn.pasang { width: 30px; padding: 0; justify-content: center; }
+  .icon-btn.pasang span { display: none; }
+  /* Di ponsel petunjuknya dipasang ke layar, bukan ke tombol: tombolnya ada di
+     tengah baris kontrol, dan kotak 280px yang menggantung ke kiri darinya
+     keluar layar. */
+  .pasang-petunjuk { position: fixed; top: 112px; left: var(--s3); right: var(--s3); width: auto; }
   .date-pill { font-size: 11px; }
 
   /* Kelima angka dalam SATU baris, bukan digulir ke samping: menggulir akan
@@ -775,7 +825,7 @@ html[data-theme="dark"] .viewbtn.on { background: var(--line); }
   .nrow { grid-template-columns: minmax(0, 1fr); gap: 3px; }
 
   .searchbar { flex-wrap: wrap; margin: var(--s3) 0 var(--s2); }
-  .searchbar input { flex-basis: 100%; min-width: 0; }
+  .search-field { flex-basis: 100%; min-width: 0; }
   .searchbar select { flex: 1 1 45%; min-width: 0; font-size: 12px; padding: 8px 8px; }
   /* Tombol tampilan pindah ke bilah bawah - pola aplikasi native, dan ibu jari
      memang ada di bawah. Sebelumnya ia memakan satu baris sendiri di atas tab:

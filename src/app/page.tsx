@@ -1,7 +1,7 @@
 import Dashboard from "@/components/Dashboard";
 import { getSheetData, todayInJakarta } from "@/lib/sheets";
 import { pasangkanArsip } from "@/lib/tahunLalu";
-import { SHEETS, type Entry, type SheetKey } from "@/lib/types";
+import { SHEETS, VIEWS, type Entry, type SheetKey } from "@/lib/types";
 
 /** Hasil baca sheet di-cache 5 menit; edit di Google Sheets menyusul sendiri. */
 export const revalidate = 300;
@@ -9,7 +9,7 @@ export const revalidate = 300;
 export default async function Page({
   searchParams,
 }: {
-  searchParams: Promise<{ sheet?: string; id?: string }>;
+  searchParams: Promise<{ sheet?: string; id?: string; view?: string }>;
 }) {
   const sp = await searchParams;
   const sheet: SheetKey = SHEETS.find((s) => s.key === sp.sheet)?.key ?? "DATA";
@@ -28,6 +28,8 @@ export default async function Page({
     arsip && arsip.source === "sheet" ? Object.fromEntries(pasangkanArsip(payload.rows, arsip.rows)) : {};
 
   const focusId = Number(sp.id) || null;
+  // Dari pintasan aplikasi (tekan-lama ikon). Nilai tak dikenal diabaikan.
+  const initialView = VIEWS.find((v) => v.key === sp.view)?.key ?? null;
 
   return (
     <Dashboard
@@ -36,6 +38,7 @@ export default async function Page({
       serverToday={todayInJakarta()}
       pembanding={pembanding}
       focusId={focusId}
+      initialView={initialView}
     />
   );
 }
